@@ -4,6 +4,7 @@ import { TOOLS } from '@/data';
 import { HEALTH_CONDITIONS } from '@/data/health';
 import { ARTICLES } from '@/data/articles';
 import { PRINTABLES } from '@/data/printables';
+import { BREEDS } from '@/data/breeds';
 
 // Tool icons map (same as always)
 const toolIcons: Record<string, string> = {
@@ -42,7 +43,7 @@ const steps = [
   {
     title: 'Step 3: Schedule Essential Care',
     desc: 'Keep up with vaccinations, deworming, farrier visits, and dental checks.',
-    tools: ['deworming-schedule', 'mare-gestation-calculator'],
+    tools: ['deworming-schedule'],
     health: ['colic', 'laminitis', 'thrush', 'equine-influenza'],
     printables: ['vaccination-record', 'farrier-log', 'health-record'],
     tips: 'A negative Coggins test and a health certificate are required for travel. Find a local large‑animal vet before an emergency.'
@@ -71,7 +72,7 @@ const steps = [
     title: 'Step 7: Continue Learning',
     desc: 'Explore our breed guides, educational articles, and health library.',
     breeds: ['quarter-horse', 'arabian', 'thoroughbred', 'morgan'],
-    articles: [], // will be filled by related articles from data
+    articles: [],
     tips: 'Join a local riding club or online community. The more you learn, the better partner you’ll be for your horse.'
   }
 ];
