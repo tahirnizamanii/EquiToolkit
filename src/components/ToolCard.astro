@@ -1,0 +1,43 @@
+---
+// src/components/ScrollToTopButton.astro
+---
+
+<button id="scroll-to-top" title="Back to top">
+  <i class="fa-solid fa-arrow-up"></i>
+</button>
+
+<script>
+  const btn = document.getElementById('scroll-to-top');
+  window.addEventListener('scroll', () => {
+    btn.style.display = window.scrollY > 500 ? 'flex' : 'none';
+  });
+  btn.addEventListener('click', () => {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  });
+</script>
+
+<style>
+  #scroll-to-top {
+    position: fixed;
+    bottom: 2rem;
+    right: 2rem;
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    background: var(--primary, #2e5c3e);
+    color: white;
+    border: none;
+    font-size: 1.2rem;
+    cursor: pointer;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 4px 14px rgba(0,0,0,0.2);
+    z-index: 90;
+    transition: transform 0.2s, background 0.2s;
+  }
+  #scroll-to-top:hover {
+    background: #1e4532;
+    transform: translateY(-2px);
+  }
+</style>

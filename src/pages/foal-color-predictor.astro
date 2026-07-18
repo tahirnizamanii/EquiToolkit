@@ -1,0 +1,10 @@
+---
+import ToolWrapper from '../components/ToolWrapper.astro';
+import FoalColorPredictor from '../components/tools/FoalColorPredictor';
+import { TOOLS } from '../data';
+
+const tool = TOOLS.find(t => t.id === 'foal-color')!;
+---
+<ToolWrapper tool={tool}>
+  <FoalColorPredictor client:load />
+</ToolWrapper>

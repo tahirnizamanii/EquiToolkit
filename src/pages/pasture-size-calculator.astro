@@ -1,0 +1,11 @@
+---
+import ToolWrapper from '@/components/ToolWrapper.astro';
+import PastureSize from '@/components/tools/PastureSize';
+import { TOOLS } from '@/data';
+
+const tool = TOOLS.find(t => t.id === 'pasture-size-calculator')!;
+---
+
+<ToolWrapper tool={tool}>
+  <PastureSize client:load />
+</ToolWrapper>

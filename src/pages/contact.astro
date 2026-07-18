@@ -1,0 +1,83 @@
+---
+import MainLayout from '@/layouts/MainLayout.astro';
+---
+
+<MainLayout title="Contact Us | EquiToolkit Support & Feedback" description="Have a feature suggestion? Found a math bug? Want to propose an additional veterinary calculator? We'd love to hear from you.">
+  <div class="page-wrap">
+    <nav class="breadcrumbs">
+      <a href="/">Home</a>
+      <i class="fa-solid fa-chevron-right"></i>
+      <span>Contact</span>
+    </nav>
+
+    <header class="page-hero">
+      <div class="hero-icon"><i class="fa-solid fa-envelope"></i></div>
+      <h1>Get in Touch</h1>
+      <p>Have a feature suggestion? Found a math bug? We'd love to hear from you.</p>
+    </header>
+
+    <div class="layout">
+      <aside class="contact-info">
+        <div class="info-card"><i class="fa-solid fa-envelope"></i> support@equitoolkit.com</div>
+        <div class="info-card"><i class="fa-solid fa-clock"></i> Response within 24 hours</div>
+        <div class="info-card"><i class="fa-solid fa-globe"></i> Serving horse lovers globally</div>
+      </aside>
+
+      <form id="contact-form" class="contact-form">
+        <div class="field"><label>Your Name *</label><input type="text" id="name" required /></div>
+        <div class="field"><label>Email Address *</label><input type="email" id="email" required /></div>
+        <div class="field"><label>Subject</label><input type="text" id="subject" /></div>
+        <div class="field"><label>Your Message *</label><textarea id="message" rows="5" required></textarea></div>
+        <div id="form-status"></div>
+        <button type="submit" class="btn btn-primary"><i class="fa-solid fa-paper-plane"></i> Send Message</button>
+      </form>
+    </div>
+  </div>
+</MainLayout>
+
+<script>
+  const form = document.getElementById('contact-form');
+  const statusEl = document.getElementById('form-status');
+  form?.addEventListener('submit', (e) => {
+    e.preventDefault();
+    const name = (document.getElementById('name') as HTMLInputElement).value;
+    const email = (document.getElementById('email') as HTMLInputElement).value;
+    const message = (document.getElementById('message') as HTMLTextAreaElement).value;
+    if (!name || !email || !message) {
+      statusEl!.innerHTML = '<p class="error"><i class="fa-solid fa-circle-exclamation"></i> Please fill all required fields.</p>';
+      return;
+    }
+    statusEl!.innerHTML = '<p class="success"><i class="fa-solid fa-circle-check"></i> Thank you! Your message has been sent successfully.</p>';
+    form.reset();
+  });
+</script>
+
+<style>
+  .page-wrap { max-width: 900px; margin: 0 auto; padding: 2rem; }
+  .breadcrumbs { font-size: 0.85rem; color: var(--text-muted); margin-bottom: 2rem; display: flex; align-items: center; gap: 0.5rem; }
+  .breadcrumbs a { color: var(--text-muted); text-decoration: none; }
+  .breadcrumbs a:hover { color: var(--primary); }
+  .breadcrumbs i { font-size: 0.7rem; }
+
+  .page-hero { text-align: center; margin-bottom: 2rem; }
+  .hero-icon { font-size: 3rem; color: var(--primary); margin-bottom: 1rem; }
+  .page-hero h1 { font-size: 2rem; font-weight: 800; color: var(--text); }
+  .page-hero p { color: var(--text-muted); }
+
+  .layout { display: grid; grid-template-columns: 240px 1fr; gap: 2rem; align-items: start; }
+  @media (max-width: 768px) { .layout { grid-template-columns: 1fr; } }
+
+  .contact-info { display: flex; flex-direction: column; gap: 1rem; }
+  .info-card { background: white; border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 1rem; font-size: 0.9rem; color: var(--text-muted); display: flex; align-items: center; gap: 0.5rem; }
+  .info-card i { color: var(--primary); font-size: 1.1rem; width: 1.5rem; text-align: center; }
+
+  .contact-form { background: white; border: 1px solid var(--border); border-radius: var(--radius); padding: 2rem; display: flex; flex-direction: column; gap: 1rem; }
+  .field label { display: block; font-size: 0.85rem; font-weight: 600; color: var(--text); margin-bottom: 0.3rem; }
+  .field input, .field textarea { width: 100%; padding: 0.6rem; border: 1px solid var(--border); border-radius: var(--radius-sm); font-size: 0.9rem; background: var(--bg); }
+  .field input:focus, .field textarea:focus { outline: none; border-color: var(--primary); box-shadow: 0 0 0 3px rgba(46,92,62,0.1); }
+  .btn { display: inline-flex; align-items: center; gap: 0.4rem; padding: 0.7rem 1.8rem; border-radius: 50px; font-weight: 600; font-size: 0.9rem; text-decoration: none; transition: 0.2s; cursor: pointer; border: none; }
+  .btn-primary { background: var(--primary); color: white; box-shadow: 0 4px 14px rgba(46,92,62,0.2); }
+  .btn-primary:hover { background: #1e4532; transform: translateY(-1px); }
+  .success { color: #2ecc71; font-size: 0.9rem; display: flex; align-items: center; gap: 0.4rem; }
+  .error { color: #e74c3c; font-size: 0.9rem; display: flex; align-items: center; gap: 0.4rem; }
+</style>

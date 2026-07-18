@@ -1,0 +1,100 @@
+@import url('https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,500;0,600;0,700;1,400&family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap');
+@import "tailwindcss";
+
+@theme {
+  --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
+  --font-serif: "Lora", Georgia, Cambria, "Times New Roman", Times, serif;
+  --font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, monospace;
+
+  /* Theme colors matching the requested design system of horsecarefinder.com */
+  --color-bg: #f9f6f0;
+  --color-surface: #ffffff;
+  --color-text-main: #1c2b21;
+  --color-text-muted: #505c54;
+  --color-primary: #1b3d24;
+  --color-primary-light: #eaf1ec;
+  --color-accent: #b69246;
+  --color-accent-light: #faf4e5;
+  --color-border-card: #e3ded5;
+
+  --shadow-sm: 0 1px 3px rgba(0,0,0,0.04);
+  --shadow-normal: 0 4px 16px rgba(0,0,0,0.06);
+  --shadow-lg: 0 12px 32px rgba(0,0,0,0.08);
+
+  --radius-xl: 14px;
+  --radius-sm: 8px;
+}
+
+:root {
+  --bg: #f9f6f0;
+  --surface: #ffffff;
+  --text: #1c2b21;
+  --text-muted: #505c54;
+  --primary: #1b3d24;
+  --primary-light: #eaf1ec;
+  --accent: #b69246;
+  --accent-light: #faf4e5;
+  --border: #e3ded5;
+  --shadow-sm: 0 1px 3px rgba(0,0,0,0.04);
+  --shadow: 0 4px 16px rgba(0,0,0,0.06);
+  --shadow-lg: 0 12px 32px rgba(0,0,0,0.08);
+  --radius: 14px;
+  --radius-sm: 8px;
+  --transition: 0.2s ease;
+  --font-serif: "Lora", Georgia, Cambria, serif;
+}
+
+body {
+  font-family: var(--font-sans);
+  background-color: var(--bg);
+  color: var(--text);
+  line-height: 1.6;
+  margin: 0;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Custom form elements styling for equestrian app feel */
+input[type="number"],
+input[type="text"],
+input[type="date"],
+select,
+textarea {
+  background-color: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: 0.625rem 0.875rem;
+  color: var(--text);
+  transition: all var(--transition);
+  font-size: 0.95rem;
+}
+
+input[type="number"]:focus,
+input[type="text"]:focus,
+input[type="date"]:focus,
+select:focus,
+textarea:focus {
+  outline: none;
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px rgba(46, 92, 62, 0.15);
+}
+
+/* Print Styles */
+@media print {
+  header, footer, nav, button, .no-print {
+    display: none !important;
+  }
+  body {
+    background: white;
+    color: black;
+  }
+  .print-only {
+    display: block !important;
+  }
+  .print-card {
+    border: 1px solid #000 !important;
+    box-shadow: none !important;
+    page-break-inside: avoid;
+  }
+}
+

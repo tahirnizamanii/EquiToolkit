@@ -1,0 +1,10 @@
+---
+import ToolWrapper from '../components/ToolWrapper.astro';
+import BlanketingGuide from '../components/tools/BlanketingGuide';
+import { TOOLS } from '../data';
+
+const tool = TOOLS.find(t => t.id === 'blanketing-guide')!;
+---
+<ToolWrapper tool={tool}>
+  <BlanketingGuide client:load />
+</ToolWrapper>

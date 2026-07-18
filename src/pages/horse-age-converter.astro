@@ -1,0 +1,10 @@
+---
+import ToolWrapper from '../components/ToolWrapper.astro';
+import AgeConverter from '../components/tools/AgeConverter';
+import { TOOLS } from '../data';
+
+const tool = TOOLS.find(t => t.id === 'age-converter')!;
+---
+<ToolWrapper tool={tool}>
+  <AgeConverter client:load />
+</ToolWrapper>

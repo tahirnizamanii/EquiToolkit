@@ -1,0 +1,398 @@
+---
+import MainLayout from '@/layouts/MainLayout.astro';
+import { BREEDS } from '@/data/breeds';
+
+// Static data for the tables that are not from the data files
+const gestationData = [
+  { day: "Day 14 - 16", phase: "First Trimester", fetal: "Initial embryo vesicle visible in uterus via ultrasound.", mgmt: "Mandatory ultrasound to pinch and eliminate dangerous twins." },
+  { day: "Day 28 - 30", phase: "First Trimester", fetal: "Fetal heartbeat detected. Sizable limb bud structures start.", mgmt: "Recheck scan to confirm cardiac viability. Standard nutrition." },
+  { day: "Day 45 - 60", phase: "First Trimester", fetal: "Foal sex can begin to be determined by specialized scanners.", mgmt: "Check uterine attachment. Maintain normal deworming cycles." },
+  { day: "Day 150", phase: "Second Trimester", fetal: "Genitals, hooves, and tactile hairs around muzzle are fully formed.", mgmt: "Pneumabort‑K (EHV‑1) vaccine booster #1." },
+  { day: "Day 210", phase: "Second Trimester", fetal: "Rapid skeleton ossification. Mane and tail follicles emerge.", mgmt: "Pneumabort‑K (EHV‑1) vaccine booster #2." },
+  { day: "Day 270", phase: "Third Trimester", fetal: "Fetus gains weight rapidly, taking up over 60% of total birth mass.", mgmt: "Pneumabort‑K (EHV‑1) vaccine booster #3." },
+  { day: "Day 310", phase: "Third Trimester", fetal: "Lungs prepare for air respiratory mechanics.", mgmt: "Administer standard 5‑way vaccine boosters to maximize colostrum antibodies." },
+  { day: "Day 330 - 345", phase: "Late Gestation / Birth", fetal: "Full maturation of internal systems. Final position adjust.", mgmt: "Prepare indoor sanitized straw foaling stall. Watch udder 'waxing'." }
+];
+
+const blanketData = [
+  { temp: "Above 60°F (15°C)", natural: "No blanket", clipped: "No blanket / Fly sheet only", senior: "No blanket" },
+  { temp: "50°F to 60°F (10°C to 15°C)", natural: "No blanket", clipped: "Light sheet (0g)", senior: "No blanket" },
+  { temp: "40°F to 50°F (5°C to 10°C)", natural: "No blanket (Rain sheet if heavy rain)", clipped: "Lightweight blanket (100g)", senior: "Light sheet if damp" },
+  { temp: "30°F to 40°F (-1°C to 5°C)", natural: "No blanket / Light blanket if wind/rain", clipped: "Mediumweight blanket (200g)", senior: "Lightweight blanket (100g)" },
+  { temp: "20°F to 30°F (-6°C to -1°C)", natural: "Lightweight blanket (100g)", clipped: "Heavyweight blanket (300g)", senior: "Mediumweight blanket (200g)" },
+  { temp: "Below 20°F (-6°C)", natural: "Mediumweight blanket (200g)", clipped: "Heavy blanket + Neck hood + Liner", senior: "Heavyweight blanket (300g)" }
+];
+
+const dosageData = [
+  { drug: "Flunixin Meglumine (Banamine)", class: "NSAID", dose: "1.1 mg/kg (or 10cc liquid per 1000 lbs)", use: "Visceral abdominal pain (Colic), ophthalmic uveitis", route: "Oral paste or Intravenous (IV) only. NEVER IM." },
+  { drug: "Phenylbutazone (Bute)", class: "NSAID", dose: "1.0 - 2.0 grams per 1000 lbs body weight", use: "Skeletal joint pain, lameness, bone fever", route: "Oral powder/paste or slow IV only. Highly tissue damaging if missed." },
+  { drug: "Pyrantel Pamoate (Strongid)", class: "Dewormer", dose: "6.6 mg/kg base (Double dose targets tapeworms)", use: "Roundworms, strongyles, pinworms", route: "Oral paste. Safe safety margin." },
+  { drug: "Ivermectin (Eqvalan / Zimecterin)", class: "Dewormer", dose: "0.2 mg/kg body weight", use: "Bots, strongyles, microfilariae", route: "Oral paste. standard quarterly deworming." },
+  { drug: "Quest (Moxidectin)", class: "Dewormer", dose: "0.4 mg/kg body weight", use: "Encysted small strongyle larvae", route: "Oral paste. WARNING: Narrow safety index. Do not overdose." }
+];
+
+const ageData = [
+  { horse: "1 year", human: "12 years", stage: "Yearling", focus: "Basic halter breaking, social herds, skeletal minerals" },
+  { horse: "2 years", human: "18 years", stage: "Two‑Year‑Old", focus: "Light groundwork, initial saddle lunging, bone checks" },
+  { horse: "3 years", human: "21 years", stage: "Young Adult", focus: "Initial mounting, light backing training, wolf tooth dental" },
+  { horse: "5 years", human: "25 years", stage: "Adult Prime", focus: "Full competitive workload, regular shoeing cycles" },
+  { horse: "10 years", human: "35 years", stage: "Middle Age", focus: "Peak athletic competition, performance joint buffers" },
+  { horse: "15 years", human: "50 years", stage: "Mature Veteran", focus: "Early joint wear screenings, hock maintenance checks" },
+  { horse: "20 years", human: "65 years", stage: "Early Senior", focus: "Pituitary PPID / Cushings blood panels, senior diet fibers" },
+  { horse: "25 years", human: "75 years", stage: "Geriatric Senior", focus: "Wetted senior feeds, arthritis management, free‑choice soft hay" },
+  { horse: "30 years", human: "90 years", stage: "Extreme Geriatric", focus: "Comprehensive weight tracking, teeth floating every 6 mos" }
+];
+---
+
+<MainLayout title="Equine Reference Charts & Printable Tables | EquiToolkit" description="Printable, searchable databases providing instant metrics on weight, gestation milestones, dose rules, and temperature blanketing.">
+  <div class="page-wrap">
+    <nav class="breadcrumbs">
+      <a href="/">Home</a>
+      <i class="fa-solid fa-chevron-right"></i>
+      <span>Reference Tables</span>
+    </nav>
+
+    <header class="page-hero">
+      <div class="hero-icon"><i class="fa-solid fa-table"></i></div>
+      <h1>Equine Reference Tables</h1>
+      <p>Printable, searchable databases for weight, gestation, blanketing, dosage, and age conversion.</p>
+    </header>
+
+    <div class="controls-bar">
+      <div class="tab-bar">
+        <button class="tab active" data-tab="breed-specs">Breed Specs</button>
+        <button class="tab" data-tab="gestation">Gestation</button>
+        <button class="tab" data-tab="blanket">Blanket Chart</button>
+        <button class="tab" data-tab="dosage">Dosage</button>
+        <button class="tab" data-tab="age">Age Conversion</button>
+      </div>
+      <div class="right-controls">
+        <div class="search-box" id="search-box-container" style="display: none;">
+          <i class="fa-solid fa-magnifying-glass"></i>
+          <input type="text" id="table-search" placeholder="Filter rows..." class="search-input" />
+        </div>
+        <button class="btn btn-print" onclick="window.print()">
+          <i class="fa-solid fa-print"></i> Print View
+        </button>
+      </div>
+    </div>
+
+    <div class="table-container" id="table-breed-specs">
+      <table>
+        <thead>
+          <tr>
+            <th>Breed Name</th>
+            <th>Avg Height (Hands)</th>
+            <th>Avg Weight (lbs)</th>
+            <th>Avg Weight (kg)</th>
+            <th>Lifespan</th>
+            <th>Temperament</th>
+          </tr>
+        </thead>
+        <tbody id="breed-tbody">
+          {BREEDS.map(breed => (
+            <tr data-name={breed.name.toLowerCase()}>
+              <td class="font-semibold">{breed.name}</td>
+              <td>{breed.heightRange.split(' (')[0]}</td>
+              <td>{breed.weightRange.split(' lbs')[0]} lbs</td>
+              <td>{breed.weightRange.includes('kg') ? breed.weightRange.split('(')[1]?.replace(')', '') : 'N/A'}</td>
+              <td>{breed.lifespan}</td>
+              <td class="truncate">{breed.temperament}</td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
+
+    <div class="table-container hidden" id="table-gestation">
+      <table>
+        <thead>
+          <tr>
+            <th>Day Range</th>
+            <th>Trimester</th>
+            <th>Fetal Milestones</th>
+            <th>Management Reminders</th>
+          </tr>
+        </thead>
+        <tbody>
+          {gestationData.map(row => (
+            <tr>
+              <td class="font-mono font-bold">{row.day}</td>
+              <td><span class="badge">{row.phase}</span></td>
+              <td>{row.fetal}</td>
+              <td>{row.mgmt}</td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
+
+    <div class="table-container hidden" id="table-blanket">
+      <table>
+        <thead>
+          <tr>
+            <th>Ambient Temp</th>
+            <th>Unclipped Horse</th>
+            <th>Clipped Horse</th>
+            <th>Senior / Hard-Keeper</th>
+          </tr>
+        </thead>
+        <tbody>
+          {blanketData.map(row => (
+            <tr>
+              <td class="font-bold">{row.temp}</td>
+              <td>{row.natural}</td>
+              <td class="text-primary font-semibold">{row.clipped}</td>
+              <td>{row.senior}</td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
+
+    <div class="table-container hidden" id="table-dosage">
+      <table>
+        <thead>
+          <tr>
+            <th>Drug</th>
+            <th>Class</th>
+            <th>Standard Dosage</th>
+            <th>Emergency Indication</th>
+            <th>Vet Route</th>
+          </tr>
+        </thead>
+        <tbody id="dosage-tbody">
+          {dosageData.map(row => (
+            <tr data-drug={row.drug.toLowerCase()}>
+              <td class="font-bold">{row.drug}</td>
+              <td>{row.class}</td>
+              <td class="font-mono">{row.dose}</td>
+              <td>{row.use}</td>
+              <td class="text-red-700 font-semibold">{row.route}</td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
+
+    <div class="table-container hidden" id="table-age">
+      <table>
+        <thead>
+          <tr>
+            <th>Horse Age</th>
+            <th>Human Age</th>
+            <th>Life Stage</th>
+            <th>Management Focus</th>
+          </tr>
+        </thead>
+        <tbody>
+          {ageData.map(row => (
+            <tr>
+              <td class="font-bold font-mono">{row.horse}</td>
+              <td class="text-primary font-bold font-mono">{row.human}</td>
+              <td>{row.stage}</td>
+              <td>{row.focus}</td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
+  </div>
+</MainLayout>
+
+<script>
+  const tabs = document.querySelectorAll('.tab');
+  const tables = {
+    'breed-specs': document.getElementById('table-breed-specs'),
+    'gestation': document.getElementById('table-gestation'),
+    'blanket': document.getElementById('table-blanket'),
+    'dosage': document.getElementById('table-dosage'),
+    'age': document.getElementById('table-age'),
+  };
+  const searchBox = document.getElementById('search-box-container');
+  const searchInput = document.getElementById('table-search');
+  let currentTab = 'breed-specs';
+
+  function switchTab(tabId: string) {
+    Object.values(tables).forEach(t => t.classList.add('hidden'));
+    tables[tabId]?.classList.remove('hidden');
+    currentTab = tabId;
+
+    // Show search for breed-specs and dosage
+    searchBox.style.display = (tabId === 'breed-specs' || tabId === 'dosage') ? 'block' : 'none';
+    if (searchInput) (searchInput as HTMLInputElement).value = '';
+    filterTable();
+  }
+
+  tabs.forEach(tab => {
+    tab.addEventListener('click', () => {
+      tabs.forEach(t => t.classList.remove('active'));
+      tab.classList.add('active');
+      switchTab(tab.dataset.tab);
+    });
+  });
+
+  function filterTable() {
+    const query = (searchInput as HTMLInputElement)?.value.toLowerCase().trim() || '';
+    if (currentTab === 'breed-specs') {
+      const rows = document.querySelectorAll('#breed-tbody tr');
+      rows.forEach(row => {
+        const name = (row as HTMLElement).dataset.name || '';
+        (row as HTMLElement).style.display = name.includes(query) ? '' : 'none';
+      });
+    } else if (currentTab === 'dosage') {
+      const rows = document.querySelectorAll('#dosage-tbody tr');
+      rows.forEach(row => {
+        const drug = (row as HTMLElement).dataset.drug || '';
+        (row as HTMLElement).style.display = drug.includes(query) ? '' : 'none';
+      });
+    }
+  }
+
+  searchInput?.addEventListener('input', filterTable);
+</script>
+
+<style>
+  .page-wrap {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 2rem;
+  }
+  .breadcrumbs {
+    font-size: 0.85rem;
+    color: var(--text-muted);
+    margin-bottom: 2rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+  .breadcrumbs a { color: var(--text-muted); text-decoration: none; }
+  .breadcrumbs a:hover { color: var(--primary); }
+  .breadcrumbs i { font-size: 0.7rem; }
+
+  .page-hero {
+    text-align: center;
+    margin-bottom: 2rem;
+  }
+  .hero-icon { font-size: 3rem; color: var(--primary); margin-bottom: 1rem; }
+  .page-hero h1 { font-size: 2rem; font-weight: 800; color: var(--text); }
+  .page-hero p { color: var(--text-muted); margin-top: 0.5rem; }
+
+  .controls-bar {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    align-items: center;
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+  }
+  .tab-bar {
+    display: flex;
+    gap: 0.3rem;
+    flex-wrap: wrap;
+  }
+  .tab {
+    background: white;
+    border: 1px solid var(--border);
+    color: var(--text-muted);
+    padding: 0.5rem 1.2rem;
+    border-radius: 50px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: 0.2s;
+  }
+  .tab.active {
+    background: var(--primary);
+    border-color: var(--primary);
+    color: white;
+  }
+  .right-controls {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+  }
+  .search-box {
+    position: relative;
+  }
+  .search-box i {
+    position: absolute;
+    left: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--text-muted);
+    font-size: 0.8rem;
+  }
+  .search-input {
+    padding: 0.5rem 1rem 0.5rem 2rem;
+    border: 1px solid var(--border);
+    border-radius: 50px;
+    font-size: 0.85rem;
+    background: white;
+    transition: border-color 0.2s;
+  }
+  .search-input:focus { outline: none; border-color: var(--primary); box-shadow: 0 0 0 3px rgba(46,92,62,0.1); }
+  .btn-print {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    padding: 0.5rem 1.2rem;
+    border-radius: 50px;
+    font-weight: 600;
+    font-size: 0.85rem;
+    background: var(--primary);
+    color: white;
+    border: none;
+    cursor: pointer;
+    transition: background 0.2s;
+  }
+  .btn-print:hover { background: #1e4532; }
+
+  .table-container {
+    background: white;
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    overflow-x: auto;
+    box-shadow: var(--shadow-sm);
+  }
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.85rem;
+  }
+  th {
+    background: var(--bg);
+    text-align: left;
+    padding: 0.8rem 1rem;
+    font-weight: 700;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    font-size: 0.7rem;
+    letter-spacing: 0.5px;
+    border-bottom: 2px solid var(--border);
+  }
+  td {
+    padding: 0.7rem 1rem;
+    border-bottom: 1px solid var(--border);
+    color: var(--text-muted);
+  }
+  tr:last-child td { border-bottom: none; }
+  tr:hover td { background: var(--bg); }
+  .badge {
+    background: var(--primary-light);
+    color: var(--primary);
+    padding: 0.1rem 0.6rem;
+    border-radius: 12px;
+    font-size: 0.7rem;
+    font-weight: 600;
+    white-space: nowrap;
+  }
+  .hidden { display: none; }
+  .font-mono { font-family: 'Courier New', monospace; }
+  .text-primary { color: var(--primary); }
+  .truncate { max-width: 150px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  @media print {
+    .controls-bar, .breadcrumbs { display: none; }
+    .table-container { box-shadow: none; border: none; }
+  }
+</style>

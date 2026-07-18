@@ -1,0 +1,144 @@
+---
+import MainLayout from '../layouts/MainLayout.astro';
+import { TOOLS } from '../data';
+
+// Reuse the same toolIcons map as the homepage
+const toolIcons: Record<string, string> = {
+  'weight-calculator': 'fa-solid fa-scale-balanced',
+  'blanketing-guide': 'fa-solid fa-temperature-three-quarters',
+  'foal-color-predictor': 'fa-solid fa-dna',
+  'deworming-schedule': 'fa-solid fa-capsules',
+  'mare-gestation-calculator': 'fa-solid fa-cake-candles',
+  'feed-cost-calculator': 'fa-solid fa-calculator',
+  'riding-log': 'fa-solid fa-book-open',
+  'show-checklist': 'fa-solid fa-list-check',
+  'body-condition-scorer': 'fa-solid fa-weight-scale',
+  'horse-age-converter': 'fa-solid fa-clock-rotate-left',
+  'medication-dosage': 'fa-solid fa-syringe',
+  'saddle-fit-guide': 'fa-solid fa-horse',
+};
+---
+
+<MainLayout title="All Equine Calculators & Tools Directory | EquiToolkit" description="Browse the complete directory of free online equestrian weight estimators, gestational calendars, and stable planners.">
+  <div class="page-wrap">
+    <!-- Breadcrumbs -->
+    <nav class="breadcrumbs">
+      <a href="/">Home</a>
+      <i class="fa-solid fa-chevron-right"></i>
+      <span>All Tools</span>
+    </nav>
+
+    <header class="page-hero">
+      <div class="hero-icon"><i class="fa-solid fa-compass"></i></div>
+      <h1>All Equine Tools Directory</h1>
+      <p>Every free calculator, tracker, and planner – one page.</p>
+    </header>
+
+    <div class="tools-grid">
+      {TOOLS.map(tool => (
+        <a href={tool.path} class="tool-card">
+          <div class="tool-icon">
+            <i class={toolIcons[tool.id] || 'fa-solid fa-horse'}></i>
+          </div>
+          <h3>{tool.title}</h3>
+          <p>{tool.shortDesc}</p>
+          <span class="tool-tag">{tool.category}</span>
+        </a>
+      ))}
+    </div>
+  </div>
+</MainLayout>
+
+<style>
+  .page-wrap {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 2rem;
+  }
+  .breadcrumbs {
+    font-size: 0.85rem;
+    color: var(--text-muted);
+    margin-bottom: 2rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+  .breadcrumbs a { color: var(--text-muted); text-decoration: none; }
+  .breadcrumbs a:hover { color: var(--primary); }
+  .breadcrumbs i { font-size: 0.7rem; }
+
+  .page-hero {
+    text-align: center;
+    margin-bottom: 3rem;
+  }
+  .hero-icon {
+    font-size: 3rem;
+    color: var(--primary);
+    margin-bottom: 1rem;
+  }
+  .page-hero h1 {
+    font-size: 2rem;
+    font-weight: 800;
+    color: var(--text);
+    margin-bottom: 0.5rem;
+  }
+  .page-hero p {
+    color: var(--text-muted);
+  }
+
+  .tools-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 1.5rem;
+  }
+  .tool-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 1.8rem;
+    box-shadow: var(--shadow-sm);
+    transition: 0.2s;
+    text-decoration: none;
+    color: inherit;
+    display: flex;
+    flex-direction: column;
+  }
+  .tool-card:hover {
+    transform: translateY(-4px);
+    box-shadow: var(--shadow-lg);
+    border-color: var(--accent);
+  }
+  .tool-icon {
+    width: 48px;
+    height: 48px;
+    border-radius: 12px;
+    background: var(--primary-light);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5rem;
+    color: var(--primary);
+    margin-bottom: 1rem;
+  }
+  .tool-card h3 {
+    font-size: 1.1rem;
+    font-weight: 700;
+    margin-bottom: 0.4rem;
+  }
+  .tool-card p {
+    font-size: 0.85rem;
+    color: var(--text-muted);
+    flex: 1;
+    margin-bottom: 1rem;
+  }
+  .tool-tag {
+    display: inline-block;
+    font-size: 0.7rem;
+    font-weight: 600;
+    color: var(--primary);
+    background: var(--primary-light);
+    padding: 0.2rem 0.7rem;
+    border-radius: 20px;
+    align-self: flex-start;
+  }
+</style>

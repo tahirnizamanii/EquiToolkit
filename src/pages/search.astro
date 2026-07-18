@@ -1,0 +1,142 @@
+---
+import MainLayout from '@/layouts/MainLayout.astro';
+import { TOOLS } from '@/data';
+import { BREEDS } from '@/data/breeds';
+import { ARTICLES } from '@/data/articles';
+import { HEALTH_CONDITIONS } from '@/data/health';
+import { FEED_DATABASE } from '@/data/feed';
+
+// Merge all searchable items into one array with a type tag
+const allItems = [
+  ...TOOLS.map(t => ({ name: t.title, type: 'Calculator', summary: t.shortDesc, path: t.path, icon: 'fa-solid fa-calculator' })),
+  ...BREEDS.map(b => ({ name: b.name, type: 'Breed', summary: b.overview, path: `/breeds/${b.id}`, icon: 'fa-solid fa-horse' })),
+  ...ARTICLES.map(a => ({ name: a.title, type: 'Article', summary: a.summary, path: `/articles/${a.slug}`, icon: 'fa-solid fa-book-open' })),
+  ...HEALTH_CONDITIONS.map(h => ({ name: h.name, type: 'Health', summary: h.summary, path: `/health-library`, icon: 'fa-solid fa-notes-medical' })),
+  ...FEED_DATABASE.map(f => ({ name: f.name, type: 'Feed', summary: f.nutritionalValue, path: `/feed-database`, icon: 'fa-solid fa-wheat-awn' })),
+];
+---
+
+<MainLayout title="Search All Equine Resources | EquiToolkit" description="Quickly scan all calculators, vet articles, breed cards, health conditions, and nutrition databases.">
+  <div class="page-wrap">
+    <nav class="breadcrumbs">
+      <a href="/">Home</a>
+      <i class="fa-solid fa-chevron-right"></i>
+      <span>Search</span>
+    </nav>
+
+    <header class="page-hero">
+      <div class="hero-icon"><i class="fa-solid fa-magnifying-glass"></i></div>
+      <h1>Universal Search & Discovery</h1>
+      <p>Quickly scan all our 100% free calculators, vet articles, breed cards, health conditions, and nutrition databases.</p>
+    </header>
+
+    <div class="controls">
+      <div class="search-box">
+        <i class="fa-solid fa-magnifying-glass"></i>
+        <input type="text" id="global-search" placeholder="Search across all tools, breeds, articles..." class="search-input" autofocus />
+      </div>
+      <div class="filter-tabs" id="type-tabs">
+        <button class="filter-tab active" data-type="All">All</button>
+        <button class="filter-tab" data-type="Calculator">Calculators</button>
+        <button class="filter-tab" data-type="Breed">Breeds</button>
+        <button class="filter-tab" data-type="Article">Articles</button>
+        <button class="filter-tab" data-type="Health">Health</button>
+        <button class="filter-tab" data-type="Feed">Feed</button>
+      </div>
+    </div>
+
+    <div id="results-grid" class="results-grid">
+      {allItems.map(item => (
+        <a href={item.path} class="result-card" data-type={item.type} data-name={item.name.toLowerCase()} data-summary={item.summary.toLowerCase()}>
+          <div class="result-icon"><i class={item.icon}></i></div>
+          <div class="result-info">
+            <span class="result-type">{item.type}</span>
+            <h3>{item.name}</h3>
+            <p>{item.summary.slice(0, 100)}…</p>
+          </div>
+        </a>
+      ))}
+    </div>
+
+    <div id="no-results" class="empty-state hidden">
+      <i class="fa-solid fa-circle-exclamation"></i>
+      <p>No results found. Try a different search term or filter.</p>
+    </div>
+  </div>
+</MainLayout>
+
+<script>
+  const searchInput = document.getElementById('global-search');
+  const typeTabs = document.querySelectorAll('.filter-tab');
+  const cards = document.querySelectorAll('.result-card');
+  const noResults = document.getElementById('no-results');
+  let activeType = 'All';
+  let query = '';
+
+  function filter() {
+    let count = 0;
+    cards.forEach(card => {
+      const type = card.dataset.type;
+      const name = card.dataset.name || '';
+      const summary = card.dataset.summary || '';
+      const matchType = activeType === 'All' || type === activeType;
+      const matchSearch = name.includes(query) || summary.includes(query);
+      if (matchType && matchSearch) {
+        card.classList.remove('hidden');
+        count++;
+      } else {
+        card.classList.add('hidden');
+      }
+    });
+    noResults.classList.toggle('hidden', count > 0);
+  }
+
+  searchInput?.addEventListener('input', (e) => {
+    query = (e.target as HTMLInputElement).value.toLowerCase().trim();
+    filter();
+  });
+
+  typeTabs.forEach(tab => {
+    tab.addEventListener('click', () => {
+      typeTabs.forEach(t => t.classList.remove('active'));
+      tab.classList.add('active');
+      activeType = tab.dataset.type || 'All';
+      filter();
+    });
+  });
+</script>
+
+<style>
+  .page-wrap { max-width: 1200px; margin: 0 auto; padding: 2rem; }
+  .breadcrumbs { font-size: 0.85rem; color: var(--text-muted); margin-bottom: 2rem; display: flex; align-items: center; gap: 0.5rem; }
+  .breadcrumbs a { color: var(--text-muted); text-decoration: none; }
+  .breadcrumbs a:hover { color: var(--primary); }
+  .breadcrumbs i { font-size: 0.7rem; }
+
+  .page-hero { text-align: center; margin-bottom: 2rem; }
+  .hero-icon { font-size: 3rem; color: var(--primary); margin-bottom: 1rem; }
+  .page-hero h1 { font-size: 2rem; font-weight: 800; color: var(--text); }
+  .page-hero p { color: var(--text-muted); }
+
+  .controls { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 1rem; margin-bottom: 2rem; }
+  .search-box { position: relative; flex: 1; min-width: 300px; }
+  .search-box i { position: absolute; left: 14px; top: 50%; transform: translateY(-50%); color: var(--text-muted); }
+  .search-input { width: 100%; padding: 0.7rem 1rem 0.7rem 2.5rem; border: 1px solid var(--border); border-radius: 50px; font-size: 1rem; background: white; transition: border-color 0.2s; }
+  .search-input:focus { outline: none; border-color: var(--primary); box-shadow: 0 0 0 3px rgba(46,92,62,0.1); }
+  .filter-tabs { display: flex; gap: 0.5rem; flex-wrap: wrap; }
+  .filter-tab { background: white; border: 1px solid var(--border); color: var(--text-muted); padding: 0.5rem 1.2rem; border-radius: 50px; font-size: 0.8rem; font-weight: 600; cursor: pointer; transition: 0.2s; }
+  .filter-tab.active { background: var(--primary); border-color: var(--primary); color: white; }
+
+  .results-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1rem; }
+  .result-card { background: white; border: 1px solid var(--border); border-radius: var(--radius); padding: 1.2rem; text-decoration: none; color: inherit; display: flex; gap: 1rem; align-items: center; transition: 0.2s; }
+  .result-card:hover { box-shadow: var(--shadow-lg); border-color: var(--accent); }
+  .result-card.hidden { display: none; }
+  .result-icon { width: 48px; height: 48px; border-radius: 12px; background: var(--primary-light); display: flex; align-items: center; justify-content: center; font-size: 1.3rem; color: var(--primary); flex-shrink: 0; }
+  .result-info { flex: 1; min-width: 0; }
+  .result-type { font-size: 0.7rem; font-weight: 600; color: var(--primary); background: var(--primary-light); padding: 0.1rem 0.6rem; border-radius: 12px; display: inline-block; margin-bottom: 0.3rem; }
+  .result-info h3 { font-size: 1rem; font-weight: 700; color: var(--text); margin-bottom: 0.2rem; }
+  .result-info p { font-size: 0.8rem; color: var(--text-muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+
+  .empty-state { text-align: center; padding: 3rem; color: var(--text-muted); background: white; border-radius: var(--radius); border: 1px solid var(--border); }
+  .hidden { display: none; }
+</style>

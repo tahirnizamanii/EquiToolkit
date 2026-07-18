@@ -1,0 +1,11 @@
+---
+import ToolWrapper from '@/components/ToolWrapper.astro';
+import HeightConverter from '@/components/tools/HeightConverter';
+import { TOOLS } from '@/data';
+
+const tool = TOOLS.find(t => t.id === 'height-converter')!;
+---
+
+<ToolWrapper tool={tool}>
+  <HeightConverter client:load />
+</ToolWrapper>

@@ -1,0 +1,10 @@
+---
+import ToolWrapper from '../components/ToolWrapper.astro';
+import MedicationDosage from '../components/tools/MedicationDosage';
+import { TOOLS } from '../data';
+
+const tool = TOOLS.find(t => t.id === 'medication-dosage')!;
+---
+<ToolWrapper tool={tool}>
+  <MedicationDosage client:load />
+</ToolWrapper>

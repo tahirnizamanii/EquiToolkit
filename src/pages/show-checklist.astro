@@ -1,0 +1,10 @@
+---
+import ToolWrapper from '../components/ToolWrapper.astro';
+import ShowChecklist from '../components/tools/ShowChecklist';
+import { TOOLS } from '../data';
+
+const tool = TOOLS.find(t => t.id === 'show-checklist')!;
+---
+<ToolWrapper tool={tool}>
+  <ShowChecklist client:load />
+</ToolWrapper>

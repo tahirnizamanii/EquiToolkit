@@ -1,0 +1,143 @@
+---
+import MainLayout from '@/layouts/MainLayout.astro';
+import { TOOLS } from '@/data';
+import { ARTICLES } from '@/data/articles';
+
+export function getStaticPaths() {
+  const categories = [...new Set(TOOLS.map(t => t.category))];
+  return categories.map(cat => ({
+    params: { category: cat.toLowerCase().replace(/ & /g, '-').replace(/\s+/g, '-') },
+    props: { categoryName: cat }
+  }));
+}
+
+const { categoryName } = Astro.props;
+
+// Category metadata
+const categoryInfo = {
+  'Health & Care': {
+    title: 'Horse Health & Care Tools',
+    description: 'Keep your horses in peak condition with our scientific weight, blanketing, and deworming tools.',
+    icon: 'fa-solid fa-heart-pulse',
+    intro: 'Equine wellness begins with precise morphometrics and strategic prevention. Our clinical health calculators utilize validated formulas to give owners reliable, diagnostic‑grade insights.'
+  },
+  'Management': {
+    title: 'Horse Stable & Breeding Management',
+    description: 'Optimise your farm budgets, gestation timelines, and age calculations with our management estimators.',
+    icon: 'fa-solid fa-warehouse',
+    intro: 'Managing a breeding facility or boarding stable requires precise schedules and deep physiological knowledge. Our management suite streamlines these tasks.'
+  },
+  'Genetics': {
+    title: 'Equine Genetics & Coat Color Predictors',
+    description: 'Dive into the fascinating science of equine coat genetics and predict foal color percentages.',
+    icon: 'fa-solid fa-dna',
+    intro: 'Equine coat color genetics operate on Mendelian base models. By mapping alleles at key loci, breeders can forecast foal outcomes with high accuracy.'
+  },
+  'Training & Prep': {
+    title: 'Riding, Training & Tack Fitting Tools',
+    description: 'Optimise your saddle fits, journal your conditioning logs, and generate discipline‑specific packing checklists.',
+    icon: 'fa-solid fa-person-running',
+    intro: 'Every rider deserves tools that promote saddle‑fitting comfort and log conditioning metrics. Use our tools to streamline your training schedules.'
+  }
+};
+
+const info = categoryInfo[categoryName] || { title: categoryName + ' Tools', description: 'Free equine tools for ' + categoryName, icon: 'fa-solid fa-horse', intro: '' };
+
+// Tool icons map
+const toolIcons: Record<string, string> = {
+  'weight-calculator': 'fa-solid fa-scale-balanced',
+  'blanketing-guide': 'fa-solid fa-temperature-three-quarters',
+  'foal-color-predictor': 'fa-solid fa-dna',
+  'deworming-schedule': 'fa-solid fa-capsules',
+  'mare-gestation-calculator': 'fa-solid fa-cake-candles',
+  'feed-cost-calculator': 'fa-solid fa-calculator',
+  'riding-log': 'fa-solid fa-book-open',
+  'show-checklist': 'fa-solid fa-list-check',
+  'body-condition-scorer': 'fa-solid fa-weight-scale',
+  'horse-age-converter': 'fa-solid fa-clock-rotate-left',
+  'medication-dosage': 'fa-solid fa-syringe',
+  'saddle-fit-guide': 'fa-solid fa-horse',
+};
+
+const filteredTools = TOOLS.filter(t => t.category === categoryName);
+const relatedArticles = ARTICLES.filter(a => filteredTools.some(t => t.id === a.relatedToolId));
+---
+
+<MainLayout title={`${info.title} | EquiToolkit`} description={info.description}>
+  <div class="page-wrap">
+    <nav class="breadcrumbs">
+      <a href="/">Home</a>
+      <i class="fa-solid fa-chevron-right"></i>
+      <span>{info.title}</span>
+    </nav>
+
+    <header class="page-hero">
+      <div class="hero-icon"><i class={info.icon}></i></div>
+      <h1>{info.title}</h1>
+      <p>{info.description}</p>
+      {info.intro && <div class="intro-box"><p>{info.intro}</p></div>}
+    </header>
+
+    <section>
+      <h2><i class="fa-solid fa-toolbox"></i> Available Calculators ({filteredTools.length})</h2>
+      <div class="tools-grid">
+        {filteredTools.map(tool => (
+          <a href={tool.path} class="tool-card">
+            <div class="tool-icon"><i class={toolIcons[tool.id] || 'fa-solid fa-horse'}></i></div>
+            <h3>{tool.title}</h3>
+            <p>{tool.shortDesc}</p>
+            <span class="tool-tag">{tool.category}</span>
+          </a>
+        ))}
+      </div>
+    </section>
+
+    {relatedArticles.length > 0 && (
+      <section>
+        <h2><i class="fa-solid fa-book-open"></i> Related Guides</h2>
+        <div class="articles-grid">
+          {relatedArticles.map(article => (
+            <a href={`/articles/${article.slug}`} class="article-card">
+              <span class="article-tag">{article.category}</span>
+              <h3>{article.title}</h3>
+              <p>{article.summary}</p>
+              <span class="read-more">Read Article <i class="fa-solid fa-arrow-right"></i></span>
+            </a>
+          ))}
+        </div>
+      </section>
+    )}
+  </div>
+</MainLayout>
+
+<style>
+  .page-wrap { max-width: 1200px; margin: 0 auto; padding: 2rem; }
+  .breadcrumbs { font-size: 0.85rem; color: var(--text-muted); margin-bottom: 2rem; display: flex; align-items: center; gap: 0.5rem; }
+  .breadcrumbs a { color: var(--text-muted); text-decoration: none; }
+  .breadcrumbs a:hover { color: var(--primary); }
+  .breadcrumbs i { font-size: 0.7rem; }
+  .page-hero { text-align: center; margin-bottom: 3rem; }
+  .hero-icon { font-size: 3rem; color: var(--primary); margin-bottom: 1rem; }
+  .page-hero h1 { font-size: 2rem; font-weight: 800; color: var(--text); margin-bottom: 0.5rem; }
+  .page-hero p { color: var(--text-muted); }
+  .intro-box { background: white; border: 1px solid var(--border); border-radius: var(--radius); padding: 1.5rem; margin-top: 2rem; font-size: 0.9rem; color: var(--text-muted); line-height: 1.6; }
+
+  h2 { font-size: 1.4rem; margin-bottom: 1.5rem; display: flex; align-items: center; gap: 0.5rem; color: var(--text); }
+  h2 i { color: var(--primary); }
+
+  .tools-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 1.5rem; margin-bottom: 3rem; }
+  .tool-card { background: white; border: 1px solid var(--border); border-radius: var(--radius); padding: 1.8rem; box-shadow: var(--shadow-sm); text-decoration: none; color: inherit; transition: 0.2s; display: flex; flex-direction: column; }
+  .tool-card:hover { transform: translateY(-4px); box-shadow: var(--shadow-lg); border-color: var(--accent); }
+  .tool-icon { width: 48px; height: 48px; border-radius: 12px; background: var(--primary-light); display: flex; align-items: center; justify-content: center; font-size: 1.5rem; color: var(--primary); margin-bottom: 1rem; }
+  .tool-card h3 { font-size: 1.1rem; font-weight: 700; margin-bottom: 0.4rem; }
+  .tool-card p { font-size: 0.85rem; color: var(--text-muted); flex: 1; margin-bottom: 1rem; }
+  .tool-tag { display: inline-block; font-size: 0.7rem; font-weight: 600; color: var(--primary); background: var(--primary-light); padding: 0.2rem 0.7rem; border-radius: 20px; align-self: flex-start; }
+
+  .articles-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1.5rem; }
+  .article-card { background: white; border: 1px solid var(--border); border-radius: var(--radius); padding: 1.5rem; text-decoration: none; color: inherit; transition: 0.2s; display: flex; flex-direction: column; }
+  .article-card:hover { box-shadow: var(--shadow-lg); border-color: var(--accent); }
+  .article-tag { font-size: 0.7rem; font-weight: 600; color: var(--primary); background: var(--primary-light); padding: 0.2rem 0.7rem; border-radius: 20px; align-self: flex-start; margin-bottom: 0.5rem; }
+  .article-card h3 { font-size: 1rem; font-weight: 700; margin-bottom: 0.5rem; }
+  .article-card p { font-size: 0.85rem; color: var(--text-muted); flex: 1; margin-bottom: 1rem; }
+  .read-more { font-weight: 600; color: var(--primary); font-size: 0.85rem; display: flex; align-items: center; gap: 0.3rem; }
+</style>

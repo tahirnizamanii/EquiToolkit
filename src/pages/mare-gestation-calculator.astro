@@ -1,0 +1,10 @@
+---
+import ToolWrapper from '../components/ToolWrapper.astro';
+import MareGestationCalculator from '../components/tools/MareGestationCalculator';
+import { TOOLS } from '../data';
+
+const tool = TOOLS.find(t => t.id === 'mare-gestation')!;
+---
+<ToolWrapper tool={tool}>
+  <MareGestationCalculator client:load />
+</ToolWrapper>

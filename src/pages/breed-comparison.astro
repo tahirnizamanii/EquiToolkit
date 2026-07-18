@@ -1,0 +1,194 @@
+---
+import MainLayout from '@/layouts/MainLayout.astro';
+import { BREEDS } from '@/data/breeds';
+---
+
+<MainLayout title="Horse Breed Comparison Tool | EquiToolkit" description="Compare multiple horse breeds side-by-side: heights, weights, temperaments, uses, lifespans, and key care considerations.">
+  <div class="page-wrap">
+    <nav class="breadcrumbs">
+      <a href="/">Home</a>
+      <i class="fa-solid fa-chevron-right"></i>
+      <span>Breed Comparison</span>
+    </nav>
+
+    <header class="page-hero">
+      <div class="hero-icon"><i class="fa-solid fa-code-compare"></i></div>
+      <h1>Breed Comparison Tool</h1>
+      <p>Select two or three horse breeds to compare their temperament, morphology, workloads, lifespan, and care needs side‑by‑side.</p>
+    </header>
+
+    <div class="comparison-container">
+      <!-- Selection Bar -->
+      <div class="selection-bar" id="selection-bar">
+        <div class="select-group" id="select-group-0">
+          <label>Breed 1</label>
+          <select id="breed-select-0" class="breed-select">
+            {BREEDS.map(b => <option value={b.id}>{b.name}</option>)}
+          </select>
+        </div>
+        <div class="select-group" id="select-group-1">
+          <label>Breed 2</label>
+          <select id="breed-select-1" class="breed-select">
+            {BREEDS.map(b => <option value={b.id} selected={b.id === 'thoroughbred'}>{b.name}</option>)}
+          </select>
+        </div>
+        <div class="select-group hidden" id="select-group-2">
+          <label>Breed 3</label>
+          <select id="breed-select-2" class="breed-select">
+            {BREEDS.map(b => <option value={b.id}>{b.name}</option>)}
+          </select>
+          <button class="btn-remove" id="remove-breed-2"><i class="fa-solid fa-xmark"></i></button>
+        </div>
+        <button class="btn-add" id="add-breed-btn"><i class="fa-solid fa-plus"></i> Add Breed</button>
+      </div>
+
+      <!-- Comparison Table -->
+      <div class="table-wrapper">
+        <table id="comparison-table">
+          <thead>
+            <tr>
+              <th>Metric</th>
+              <th id="breed-name-0">Quarter Horse</th>
+              <th id="breed-name-1">Thoroughbred</th>
+              <th id="breed-name-2" class="hidden-col"></th>
+            </tr>
+          </thead>
+          <tbody id="comparison-body">
+            <!-- Filled by JS -->
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</MainLayout>
+
+<script>
+  const BREEDS_DATA = JSON.parse(document.getElementById('breeds-json')?.textContent || '[]');
+  
+  let selectedBreeds = ['quarter-horse', 'thoroughbred'];
+  let showThird = false;
+
+  const select0 = document.getElementById('breed-select-0') as HTMLSelectElement;
+  const select1 = document.getElementById('breed-select-1') as HTMLSelectElement;
+  const select2 = document.getElementById('breed-select-2') as HTMLSelectElement;
+  const group2 = document.getElementById('select-group-2');
+  const addBtn = document.getElementById('add-breed-btn');
+  const removeBtn2 = document.getElementById('remove-breed-2');
+  const nameCol2 = document.getElementById('breed-name-2');
+
+  select0.value = 'quarter-horse';
+  select1.value = 'thoroughbred';
+
+  function getBreed(id: string) {
+    return BREEDS_DATA.find((b: any) => b.id === id);
+  }
+
+  function renderTable() {
+    const breeds = selectedBreeds.map(id => getBreed(id)).filter(Boolean);
+    const tbody = document.getElementById('comparison-body');
+    if (!tbody) return;
+
+    document.getElementById('breed-name-0')!.textContent = breeds[0]?.name || '';
+    document.getElementById('breed-name-1')!.textContent = breeds[1]?.name || '';
+    if (nameCol2) {
+      nameCol2.textContent = breeds[2]?.name || '';
+      nameCol2.classList.toggle('hidden-col', !showThird);
+    }
+
+    const rows = [
+      { label: 'Height (Hands)', key: 'heightRange' },
+      { label: 'Average Weight', key: 'weightRange' },
+      { label: 'Temperament', key: 'temperament' },
+      { label: 'Primary Uses', key: 'uses', format: (v: string[]) => v.join(', ') },
+      { label: 'Lifespan', key: 'lifespan' },
+      { label: 'Experience Level', key: 'overview', format: (v: string) => v.toLowerCase().includes('easy') || v.toLowerCase().includes('calm') ? 'Beginner / Intermediate' : 'Intermediate / Advanced' },
+      { label: 'Climate Suitability', key: 'id', format: (id: string) => id === 'shetland-pony' || id === 'shire' ? 'Cold hardy, heat sensitive' : 'Adaptable, temperate' },
+      { label: 'Grooming Needs', key: 'id', format: (id: string) => id === 'shire' || id === 'gypsy-vanner' ? 'High (feather cleaning)' : 'Low to moderate' },
+      { label: 'Key Health Concerns', key: 'id', format: (id: string) => {
+        if (id === 'thoroughbred') return 'Gastric ulcers, thin soles, EIPH';
+        if (id === 'quarter-horse') return 'PSSM, navicular, HYPP';
+        return 'Metabolic disorders, obesity, laminitis risk';
+      }},
+    ];
+
+    tbody.innerHTML = rows.map(row => `
+      <tr>
+        <td class="metric-label">${row.label}</td>
+        ${breeds.map((b, idx) => {
+          let val: any = (b as any)[row.key];
+          if (row.format) val = row.format(val);
+          return `<td class="${idx === 2 && !showThird ? 'hidden-col' : ''}">${val}</td>`;
+        }).join('')}
+        ${breeds.length < 3 ? '<td class="hidden-col"></td>' : ''}
+      </tr>
+    `).join('');
+  }
+
+  function update() {
+    const v0 = select0.value;
+    const v1 = select1.value;
+    const v2 = select2?.value;
+    selectedBreeds = [v0, v1];
+    if (showThird && v2) selectedBreeds.push(v2);
+    renderTable();
+  }
+
+  select0.addEventListener('change', update);
+  select1.addEventListener('change', update);
+  select2?.addEventListener('change', update);
+
+  addBtn?.addEventListener('click', () => {
+    showThird = true;
+    group2?.classList.remove('hidden');
+    addBtn.classList.add('hidden');
+    // Pick a breed not selected
+    const remaining = BREEDS_DATA.find((b: any) => !selectedBreeds.includes(b.id));
+    if (remaining && select2) select2.value = remaining.id;
+    update();
+  });
+
+  removeBtn2?.addEventListener('click', () => {
+    showThird = false;
+    group2?.classList.add('hidden');
+    addBtn.classList.remove('hidden');
+    update();
+  });
+
+  renderTable();
+</script>
+
+<script type="application/json" id="breeds-json">
+  {JSON.stringify(BREEDS)}
+</script>
+
+<style>
+  .page-wrap { max-width: 1100px; margin: 0 auto; padding: 2rem; }
+  .breadcrumbs { font-size: 0.85rem; color: var(--text-muted); margin-bottom: 2rem; display: flex; align-items: center; gap: 0.5rem; }
+  .breadcrumbs a { color: var(--text-muted); text-decoration: none; }
+  .breadcrumbs a:hover { color: var(--primary); }
+  .breadcrumbs i { font-size: 0.7rem; }
+
+  .page-hero { text-align: center; margin-bottom: 2rem; }
+  .hero-icon { font-size: 3rem; color: var(--primary); margin-bottom: 1rem; }
+  .page-hero h1 { font-size: 2rem; font-weight: 800; color: var(--text); }
+  .page-hero p { color: var(--text-muted); }
+
+  .comparison-container { background: white; border: 1px solid var(--border); border-radius: var(--radius); padding: 2rem; box-shadow: var(--shadow-sm); }
+  .selection-bar { display: flex; flex-wrap: wrap; align-items: end; gap: 1rem; margin-bottom: 2rem; padding-bottom: 1.5rem; border-bottom: 1px solid var(--border); }
+  .select-group { display: flex; align-items: center; gap: 0.5rem; background: var(--bg); padding: 0.5rem 1rem; border-radius: var(--radius-sm); border: 1px solid var(--border); }
+  .select-group label { font-size: 0.75rem; font-weight: 600; color: var(--text-muted); text-transform: uppercase; white-space: nowrap; }
+  .breed-select { border: none; background: transparent; font-size: 0.9rem; font-weight: 600; color: var(--text); cursor: pointer; padding: 0.3rem; }
+  .btn-add, .btn-remove { background: var(--primary-light); color: var(--primary); border: 1px solid rgba(46,92,62,0.2); padding: 0.5rem 1.2rem; border-radius: 50px; font-weight: 600; font-size: 0.8rem; cursor: pointer; display: flex; align-items: center; gap: 0.3rem; transition: 0.2s; }
+  .btn-add:hover { background: var(--primary); color: white; }
+  .btn-remove { background: transparent; color: #e74c3c; border-color: #e74c3c; padding: 0.3rem 0.6rem; }
+  .btn-remove:hover { background: #e74c3c; color: white; }
+  .hidden { display: none; }
+  .hidden-col { display: none; }
+
+  .table-wrapper { overflow-x: auto; }
+  table { width: 100%; border-collapse: collapse; font-size: 0.85rem; min-width: 500px; }
+  th { background: var(--bg); padding: 0.8rem; text-align: left; font-weight: 700; color: var(--text-muted); text-transform: uppercase; font-size: 0.7rem; letter-spacing: 0.5px; border-bottom: 2px solid var(--border); }
+  td { padding: 0.7rem 0.8rem; border-bottom: 1px solid var(--border); color: var(--text-muted); }
+  .metric-label { font-weight: 700; color: var(--text); }
+  tr:hover td { background: var(--bg); }
+</style>

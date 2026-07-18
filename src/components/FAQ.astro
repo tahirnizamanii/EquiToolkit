@@ -1,0 +1,77 @@
+---
+interface FAQItem {
+  q: string;
+  a: string;
+}
+
+interface Props {
+  items: FAQItem[];
+}
+
+const { items } = Astro.props;
+
+const faqSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'FAQPage',
+  'mainEntity': items.map((item) => ({
+    '@type': 'Question',
+    'name': item.q,
+    'acceptedAnswer': {
+      '@type': 'Answer',
+      'text': item.a,
+    },
+  })),
+};
+---
+
+<div class="space-y-4">
+  <script type="application/ld+json" set:html={JSON.stringify(faqSchema)} />
+  <div class="divide-y divide-border-card/30 bg-white border border-border-card/40 rounded-2xl overflow-hidden shadow-sm">
+    {items.map((item, index) => (
+      <div class="faq-item transition-colors">
+        <button
+          type="button"
+          class="faq-trigger w-full text-left px-5 py-4 flex items-center justify-between font-serif font-semibold text-text-main text-sm sm:text-base hover:bg-bg/40 focus:outline-none focus:ring-2 focus:ring-primary/20 transition-all cursor-pointer"
+          data-index={index}
+        >
+          <span class="pr-4 leading-snug">{item.q}</span>
+          <i class="fa-solid fa-chevron-down text-xs text-text-muted transition-transform duration-300 faq-icon"></i>
+        </button>
+        <div class="faq-content overflow-hidden transition-all duration-300 max-h-0">
+          <div class="px-5 py-4 text-xs sm:text-sm text-text-muted leading-relaxed bg-bg/20">
+            {item.a}
+          </div>
+        </div>
+      </div>
+    ))}
+  </div>
+</div>
+
+<script>
+  const items = document.querySelectorAll('.faq-item');
+  items.forEach((item) => {
+    const trigger = item.querySelector('.faq-trigger');
+    const content = item.querySelector('.faq-content') as HTMLElement;
+    const icon = item.querySelector('.faq-icon');
+
+    trigger?.addEventListener('click', () => {
+      const isOpen = content.style.maxHeight && content.style.maxHeight !== '0px';
+      
+      // Close all other items
+      items.forEach((otherItem) => {
+        const otherContent = otherItem.querySelector('.faq-content') as HTMLElement;
+        const otherIcon = otherItem.querySelector('.faq-icon');
+        if (otherContent) otherContent.style.maxHeight = '0px';
+        if (otherIcon) otherIcon.classList.remove('rotate-180', 'text-primary');
+      });
+
+      if (!isOpen) {
+        content.style.maxHeight = content.scrollHeight + 'px';
+        icon?.classList.add('rotate-180', 'text-primary');
+      } else {
+        content.style.maxHeight = '0px';
+        icon?.classList.remove('rotate-180', 'text-primary');
+      }
+    });
+  });
+</script>

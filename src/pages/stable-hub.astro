@@ -1,0 +1,343 @@
+---
+import MainLayout from '@/layouts/MainLayout.astro';
+---
+
+<MainLayout title="Stable Management & Chore Hub | EquiToolkit" description="Manage your horse stable chores, calculate grain and hay inventory runway, and track veterinary or farrier dates.">
+  <div class="page-wrap">
+    <nav class="breadcrumbs">
+      <a href="/">Home</a>
+      <i class="fa-solid fa-chevron-right"></i>
+      <span>Stable Hub</span>
+    </nav>
+
+    <header class="page-hero">
+      <div class="hero-icon"><i class="fa-solid fa-warehouse"></i></div>
+      <h1>Stable Management Hub</h1>
+      <p>Interactive tools for checklist compliance, feed runways, vaccination schedules, and emergency dispatch sheets.</p>
+    </header>
+
+    <!-- Tabs -->
+    <div class="tabs">
+      <button class="tab active" data-tab="checklists"><i class="fa-solid fa-list-check"></i> Checklists</button>
+      <button class="tab" data-tab="feed-hay"><i class="fa-solid fa-wheat-awn"></i> Feed & Hay</button>
+      <button class="tab" data-tab="planner"><i class="fa-solid fa-calendar-check"></i> Planner</button>
+      <button class="tab" data-tab="contacts"><i class="fa-solid fa-phone-volume"></i> Contacts</button>
+    </div>
+
+    <!-- Tab Content -->
+    <div class="tab-content" id="tab-content">
+      <!-- Checklists Panel -->
+      <div class="panel active" id="panel-checklists">
+        <div class="panel-header">
+          <h2>Operational Checklists</h2>
+          <button class="btn-reset" onclick="resetAllChecks()"><i class="fa-solid fa-rotate-right"></i> Reset All</button>
+        </div>
+        <div class="checklist-grid" id="checklist-grid">
+          <!-- Daily -->
+          <div class="checklist-col">
+            <h3><span class="dot green"></span> Daily</h3>
+            <div class="progress"><span id="daily-count">0/7</span> Done</div>
+            <div class="check-items" id="daily-items"></div>
+          </div>
+          <!-- Weekly -->
+          <div class="checklist-col">
+            <h3><span class="dot gold"></span> Weekly</h3>
+            <div class="progress"><span id="weekly-count">0/4</span> Done</div>
+            <div class="check-items" id="weekly-items"></div>
+          </div>
+          <!-- Monthly -->
+          <div class="checklist-col">
+            <h3><span class="dot amber"></span> Monthly</h3>
+            <div class="progress"><span id="monthly-count">0/3</span> Done</div>
+            <div class="check-items" id="monthly-items"></div>
+          </div>
+        </div>
+        <div class="print-bar"><button class="btn btn-primary" onclick="window.print()"><i class="fa-solid fa-print"></i> Print Barn Sheet</button></div>
+      </div>
+
+      <!-- Feed & Hay Panel -->
+      <div class="panel" id="panel-feed-hay">
+        <h2>Feed & Hay Inventory Tracker</h2>
+        <div class="feed-grid">
+          <div class="feed-inputs">
+            <h4>Configure Levels</h4>
+            <div class="input-row">
+              <label>Grain Bags in Stock</label>
+              <input type="number" id="grain-bags" value="12" min="0" />
+            </div>
+            <div class="input-row">
+              <label>Grain Burn (bags/day)</label>
+              <input type="number" id="grain-per-day" value="1.5" min="0.1" step="0.1" />
+            </div>
+            <div class="input-row">
+              <label>Hay Bales in Stock</label>
+              <input type="number" id="hay-bales" value="45" min="0" />
+            </div>
+            <div class="input-row">
+              <label>Hay Burn (bales/day)</label>
+              <input type="number" id="hay-per-day" value="4.0" min="0.1" step="0.1" />
+            </div>
+          </div>
+          <div class="feed-outputs" id="feed-outputs">
+            <!-- Calculated by JS -->
+          </div>
+        </div>
+      </div>
+
+      <!-- Planner Panel -->
+      <div class="panel" id="panel-planner">
+        <h2>Routine Care Planner</h2>
+        <div class="planner-grid">
+          <div class="planner-inputs">
+            <h4>Last Performed Dates</h4>
+            <div class="input-row">
+              <label>Last Core Vaccination</label>
+              <input type="date" id="planner-vac" value="2026-03-10" />
+            </div>
+            <div class="input-row">
+              <label>Last Farrier Trim</label>
+              <input type="date" id="planner-farrier" value="2026-07-01" />
+            </div>
+            <div class="input-row">
+              <label>Last Dental Float</label>
+              <input type="date" id="planner-dental" value="2025-08-15" />
+            </div>
+          </div>
+          <div class="planner-outputs" id="planner-outputs">
+            <!-- Calculated by JS -->
+          </div>
+        </div>
+      </div>
+
+      <!-- Contacts Panel -->
+      <div class="panel" id="panel-contacts">
+        <h2>Emergency Dispatch Sheet</h2>
+        <div class="contacts-grid">
+          <div class="contacts-form">
+            <h4>Edit Barn Contacts</h4>
+            <div class="input-row"><label>Vet Name</label><input type="text" id="c-vet-name" value="Dr. Sarah Collins, DVM" /></div>
+            <div class="input-row"><label>Vet Phone</label><input type="text" id="c-vet-phone" value="555-019-4820" /></div>
+            <div class="input-row"><label>Farrier Name</label><input type="text" id="c-farrier-name" value="Jason Vance, CJF" /></div>
+            <div class="input-row"><label>Farrier Phone</label><input type="text" id="c-farrier-phone" value="555-012-9938" /></div>
+            <div class="input-row"><label>Barn Manager</label><input type="text" id="c-manager" value="Lucy Armstrong" /></div>
+            <div class="input-row"><label>Manager Phone</label><input type="text" id="c-manager-phone" value="555-015-2831" /></div>
+            <div class="input-row"><label>Barn Address</label><textarea id="c-address" rows="2">942 Whispering Pines Rd, Lexington, KY 40502</textarea></div>
+          </div>
+          <div class="emergency-card" id="emergency-card">
+            <!-- Rendered by JS -->
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</MainLayout>
+
+<script>
+  // ---- Tabs ----
+  document.querySelectorAll('.tab').forEach(tab => {
+    tab.addEventListener('click', () => {
+      document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+      tab.classList.add('active');
+      const id = tab.dataset.tab;
+      document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+      document.getElementById(`panel-${id}`)?.classList.add('active');
+    });
+  });
+
+  // ---- Checklists ----
+  const dailyTasks = [
+    'Check stock tank heaters & water buckets',
+    'Feed morning hay & grain rations',
+    'Pick stalls and dump manure; top up bedding',
+    'Conduct physical visual checks',
+    'Turn out horses into pasture/dry-lot',
+    'Pick hooves of turned-in horses',
+    'Feed evening hay & grain rations'
+  ];
+  const weeklyTasks = [
+    'Scrub out and sanitize all water tanks',
+    'Sweep feed room, empty dust bins, count inventories',
+    'Wash feeding tubs and oil gate latches',
+    'Inspect paddock fencing and wire lines'
+  ];
+  const monthlyTasks = [
+    'Deep wash trailer, verify tires & brakes',
+    'Cobweb dusting and high beams disinfection',
+    'Check barn first-aid kit; restock Vetwrap'
+  ];
+
+  let checks: Record<string, boolean> = JSON.parse(localStorage.getItem('stable-checks') || '{}');
+
+  function saveChecks() { localStorage.setItem('stable-checks', JSON.stringify(checks)); }
+  function renderChecklist(containerId: string, tasks: string[], prefix: string, countId: string) {
+    const container = document.getElementById(containerId);
+    if (!container) return;
+    container.innerHTML = tasks.map((task, i) => {
+      const key = `${prefix}-${i}`;
+      const checked = checks[key] || false;
+      return `<label class="check-item"><input type="checkbox" data-key="${key}" ${checked ? 'checked' : ''} /> ${task}</label>`;
+    }).join('');
+    updateCount(countId, container);
+    container.querySelectorAll('input').forEach(inp => {
+      inp.addEventListener('change', () => {
+        checks[inp.dataset.key!] = (inp as HTMLInputElement).checked;
+        saveChecks();
+        updateCount(countId, container);
+      });
+    });
+  }
+  function updateCount(countId: string, container: HTMLElement) {
+    const total = container.querySelectorAll('input').length;
+    const done = container.querySelectorAll('input:checked').length;
+    const el = document.getElementById(countId);
+    if (el) el.textContent = `${done}/${total}`;
+  }
+
+  renderChecklist('daily-items', dailyTasks, 'd', 'daily-count');
+  renderChecklist('weekly-items', weeklyTasks, 'w', 'weekly-count');
+  renderChecklist('monthly-items', monthlyTasks, 'm', 'monthly-count');
+
+  window.resetAllChecks = function() {
+    checks = {};
+    saveChecks();
+    renderChecklist('daily-items', dailyTasks, 'd', 'daily-count');
+    renderChecklist('weekly-items', weeklyTasks, 'w', 'weekly-count');
+    renderChecklist('monthly-items', monthlyTasks, 'm', 'monthly-count');
+  };
+
+  // ---- Feed & Hay ----
+  function calcFeed() {
+    const grainBags = +(document.getElementById('grain-bags') as HTMLInputElement)?.value || 0;
+    const grainPerDay = +(document.getElementById('grain-per-day') as HTMLInputElement)?.value || 0.1;
+    const hayBales = +(document.getElementById('hay-bales') as HTMLInputElement)?.value || 0;
+    const hayPerDay = +(document.getElementById('hay-per-day') as HTMLInputElement)?.value || 0.1;
+    const grainDays = Math.floor(grainBags / grainPerDay);
+    const hayDays = Math.floor(hayBales / hayPerDay);
+    document.getElementById('feed-outputs')!.innerHTML = `
+      <div class="runway-card ${grainDays < 7 ? 'alert' : 'ok'}">
+        <div><strong>Grain Runway</strong><span class="num">${grainDays} days</span></div>
+        <span>${grainDays < 7 ? '⚠️ Low Alert' : '✓ Optimal'}</span>
+      </div>
+      <div class="runway-card ${hayDays < 10 ? 'alert' : 'ok'}">
+        <div><strong>Hay Runway</strong><span class="num">${hayDays} days</span></div>
+        <span>${hayDays < 10 ? '⚠️ Low Alert' : '✓ Optimal'}</span>
+      </div>
+    `;
+  }
+  ['grain-bags','grain-per-day','hay-bales','hay-per-day'].forEach(id => {
+    document.getElementById(id)?.addEventListener('input', calcFeed);
+  });
+  calcFeed();
+
+  // ---- Planner ----
+  function calcPlanner() {
+    const vac = new Date((document.getElementById('planner-vac') as HTMLInputElement)?.value);
+    const farrier = new Date((document.getElementById('planner-farrier') as HTMLInputElement)?.value);
+    const dental = new Date((document.getElementById('planner-dental') as HTMLInputElement)?.value);
+    const today = new Date();
+    const next = (d: Date, months: number) => {
+      const n = new Date(d); n.setMonth(n.getMonth() + months);
+      return { date: n.toLocaleDateString('en-US', { month:'short', day:'numeric', year:'numeric' }), overdue: n < today };
+    };
+    const v = next(vac, 6);
+    const f = next(farrier, 1.5);
+    const den = next(dental, 12);
+    document.getElementById('planner-outputs')!.innerHTML = `
+      <div class="plan-card ${v.overdue ? 'overdue' : 'current'}"><strong>Vaccination</strong><span>${v.date}</span><span>${v.overdue ? 'OVERDUE' : 'CURRENT'}</span></div>
+      <div class="plan-card ${f.overdue ? 'overdue' : 'current'}"><strong>Farrier</strong><span>${f.date}</span><span>${f.overdue ? 'OVERDUE' : 'CURRENT'}</span></div>
+      <div class="plan-card ${den.overdue ? 'overdue' : 'current'}"><strong>Dental</strong><span>${den.date}</span><span>${den.overdue ? 'OVERDUE' : 'CURRENT'}</span></div>
+    `;
+  }
+  ['planner-vac','planner-farrier','planner-dental'].forEach(id => {
+    document.getElementById(id)?.addEventListener('change', calcPlanner);
+  });
+  calcPlanner();
+
+  // ---- Contacts ----
+  function renderEmergencyCard() {
+    const vet = (document.getElementById('c-vet-name') as HTMLInputElement)?.value || '';
+    const vetPhone = (document.getElementById('c-vet-phone') as HTMLInputElement)?.value || '';
+    const farrier = (document.getElementById('c-farrier-name') as HTMLInputElement)?.value || '';
+    const farrierPhone = (document.getElementById('c-farrier-phone') as HTMLInputElement)?.value || '';
+    const mgr = (document.getElementById('c-manager') as HTMLInputElement)?.value || '';
+    const mgrPhone = (document.getElementById('c-manager-phone') as HTMLInputElement)?.value || '';
+    const addr = (document.getElementById('c-address') as HTMLTextAreaElement)?.value || '';
+    document.getElementById('emergency-card')!.innerHTML = `
+      <div class="red-banner"></div>
+      <div class="ec-title"><i class="fa-solid fa-phone-flip"></i> EMERGENCY DISPATCH</div>
+      <div class="ec-address">${addr}</div>
+      <div class="ec-contact"><strong>Vet</strong> ${vet}<br><a href="tel:${vetPhone}">${vetPhone}</a></div>
+      <div class="ec-contact"><strong>Farrier</strong> ${farrier}<br><a href="tel:${farrierPhone}">${farrierPhone}</a></div>
+      <div class="ec-contact"><strong>Manager</strong> ${mgr}<br><a href="tel:${mgrPhone}">${mgrPhone}</a></div>
+    `;
+  }
+  ['c-vet-name','c-vet-phone','c-farrier-name','c-farrier-phone','c-manager','c-manager-phone','c-address'].forEach(id => {
+    document.getElementById(id)?.addEventListener('input', renderEmergencyCard);
+  });
+  renderEmergencyCard();
+</script>
+
+<style>
+  .page-wrap { max-width: 1100px; margin: 0 auto; padding: 2rem; }
+  .breadcrumbs { font-size: 0.85rem; color: var(--text-muted); margin-bottom: 2rem; display: flex; align-items: center; gap: 0.5rem; }
+  .breadcrumbs a { color: var(--text-muted); text-decoration: none; }
+  .breadcrumbs a:hover { color: var(--primary); }
+  .breadcrumbs i { font-size: 0.7rem; }
+
+  .page-hero { text-align: center; margin-bottom: 2rem; }
+  .hero-icon { font-size: 3rem; color: var(--primary); margin-bottom: 1rem; }
+  .page-hero h1 { font-size: 2rem; font-weight: 800; color: var(--text); }
+  .page-hero p { color: var(--text-muted); }
+
+  .tabs { display: flex; gap: 0.5rem; margin-bottom: 1.5rem; flex-wrap: wrap; }
+  .tab { padding: 0.6rem 1.2rem; border: 1px solid var(--border); border-radius: 50px; background: white; color: var(--text-muted); font-weight: 600; font-size: 0.85rem; cursor: pointer; transition: 0.2s; display: flex; align-items: center; gap: 0.4rem; }
+  .tab.active { background: var(--primary); border-color: var(--primary); color: white; }
+  .panel { display: none; background: white; border: 1px solid var(--border); border-radius: var(--radius); padding: 2rem; box-shadow: var(--shadow-sm); }
+  .panel.active { display: block; }
+
+  /* Checklists */
+  .panel-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; }
+  .btn-reset { background: none; border: none; color: var(--primary); font-weight: 600; cursor: pointer; font-size: 0.8rem; }
+  .checklist-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 2rem; }
+  @media (max-width: 768px) { .checklist-grid { grid-template-columns: 1fr; } }
+  .dot { display: inline-block; width: 8px; height: 8px; border-radius: 50%; margin-right: 0.5rem; }
+  .dot.green { background: var(--primary); }
+  .dot.gold { background: var(--accent); }
+  .dot.amber { background: #f39c12; }
+  .progress { font-size: 0.75rem; color: var(--text-muted); margin-bottom: 0.8rem; }
+  .check-item { display: flex; align-items: start; gap: 0.5rem; padding: 0.4rem 0; font-size: 0.8rem; color: var(--text-muted); cursor: pointer; }
+  .check-item input { margin-top: 0.2rem; accent-color: var(--primary); }
+
+  /* Feed */
+  .feed-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; }
+  @media (max-width: 768px) { .feed-grid { grid-template-columns: 1fr; } }
+  .input-row { margin-bottom: 1rem; }
+  .input-row label { display: block; font-size: 0.75rem; font-weight: 600; color: var(--text-muted); text-transform: uppercase; margin-bottom: 0.2rem; }
+  .input-row input, .input-row textarea { width: 100%; padding: 0.5rem; border: 1px solid var(--border); border-radius: 8px; font-size: 0.9rem; }
+  .runway-card { background: var(--bg); border: 1px solid var(--border); padding: 1rem; border-radius: var(--radius-sm); margin-bottom: 1rem; display: flex; justify-content: space-between; align-items: center; }
+  .runway-card.alert { border-color: #e74c3c; background: #fff5f5; }
+  .runway-card.ok { border-color: #2ecc71; }
+  .num { font-size: 1.3rem; font-weight: 700; color: var(--primary); margin-left: 1rem; }
+
+  /* Planner */
+  .planner-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; }
+  @media (max-width: 768px) { .planner-grid { grid-template-columns: 1fr; } }
+  .plan-card { padding: 1rem; border-radius: var(--radius-sm); border: 1px solid var(--border); margin-bottom: 0.8rem; display: flex; justify-content: space-between; align-items: center; font-size: 0.85rem; }
+  .plan-card.overdue { border-color: #e74c3c; background: #fff5f5; color: #a71d2a; }
+  .plan-card.current { border-color: #2ecc71; }
+
+  /* Contacts */
+  .contacts-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; }
+  @media (max-width: 768px) { .contacts-grid { grid-template-columns: 1fr; } }
+  .emergency-card { border: 2px dashed #e74c3c; border-radius: var(--radius); padding: 1.5rem; background: #fff5f5; position: relative; overflow: hidden; }
+  .red-banner { position: absolute; top: 0; left: 0; width: 100%; height: 4px; background: #e74c3c; }
+  .ec-title { text-align: center; font-weight: 800; color: #a71d2a; font-size: 1.1rem; margin-bottom: 1rem; }
+  .ec-address { background: white; padding: 0.5rem; border-radius: 8px; font-weight: 600; font-size: 0.8rem; margin-bottom: 0.8rem; }
+  .ec-contact { font-size: 0.8rem; margin-bottom: 0.5rem; }
+  .ec-contact a { color: #e74c3c; font-weight: 700; }
+
+  .btn { display: inline-flex; align-items: center; gap: 0.4rem; padding: 0.6rem 1.4rem; border-radius: 50px; font-weight: 600; font-size: 0.85rem; text-decoration: none; transition: 0.2s; cursor: pointer; }
+  .btn-primary { background: var(--primary); color: white; border: none; }
+  .btn-primary:hover { background: #1e4532; }
+  .print-bar { margin-top: 1.5rem; text-align: center; }
+</style>

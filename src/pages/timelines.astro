@@ -1,0 +1,7 @@
+---
+import MainLayout from '../layouts/MainLayout.astro';
+import { TimelinesPage } from '../components/pages/AdditionalHubPages';
+---
+<MainLayout title="Equine Husbandry Timelines & Care Schedules | EquiToolkit" description="View timelines for standard farrier intervals, annual equine vaccination plans, and foal gestation.">
+  <TimelinesPage client:load onNavigate={(path) => { window.location.href = path; }} />
+</MainLayout>

@@ -1,0 +1,11 @@
+---
+import ToolWrapper from '@/components/ToolWrapper.astro';
+import WaterIntake from '@/components/tools/WaterIntake';
+import { TOOLS } from '@/data';
+
+const tool = TOOLS.find(t => t.id === 'water-intake-calculator')!;
+---
+
+<ToolWrapper tool={tool}>
+  <WaterIntake client:load />
+</ToolWrapper>

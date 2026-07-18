@@ -1,0 +1,68 @@
+---
+import MainLayout from '@/layouts/MainLayout.astro';
+---
+
+<MainLayout title="About Us | EquiToolkit – Free Equine Resources" description="The story behind the web's most trusted suite of 100% free, offline-ready equine management calculators.">
+  <div class="page-wrap">
+    <nav class="breadcrumbs">
+      <a href="/">Home</a>
+      <i class="fa-solid fa-chevron-right"></i>
+      <span>About</span>
+    </nav>
+
+    <header class="page-hero">
+      <div class="hero-icon"><i class="fa-solid fa-circle-info"></i></div>
+      <h1>About EquiToolkit</h1>
+      <p>The story behind the web's most trusted suite of 100% free, offline‑ready equine management calculators.</p>
+    </header>
+
+    <article class="content-box">
+      <p>EquiToolkit was founded in 2026 by a collective of veterinary technicians, professional barn managers, and software engineers with a shared frustration: <strong>essential equine tools shouldn't be locked behind expensive subscriptions or tracking‑heavy mobile apps.</strong></p>
+      <p>In a modern equestrian world filled with subscription‑based barn management suites, we believe basic diagnostic calculators (such as estimating a colic dose of banamine, verifying a saddle fit, or generating a strategic deworming schedule) should be universally accessible, free, and functional even when you are deep inside an insulated metal barn with zero cellular reception.</p>
+
+      <h2><i class="fa-solid fa-check-circle"></i> Our Direct Guarantees</h2>
+      <ul>
+        <li><strong>100% Free Forever:</strong> We do not charge subscriptions, we do not lock features, and we do not display noisy banner advertisements.</li>
+        <li><strong>No Sign‑Up or Accounts:</strong> You do not need to share your email address or personal details to use our services.</li>
+        <li><strong>Local & Offline First:</strong> Your entries (including riding logs, checklists, and calculators) run directly inside your browser cache (using localStorage). Your data is private to you and never uploaded to any remote servers.</li>
+        <li><strong>Science‑Backed Formulas:</strong> All calculations utilize validated veterinary formulas, such as the Henneke Body Condition Scale and AAEP parasite guidelines.</li>
+      </ul>
+
+      <h2><i class="fa-solid fa-code"></i> The Development Collective</h2>
+      <p>EquiToolkit is built using lightweight modern web frameworks to ensure maximum performance and minimum data usage. Because our calculators utilize client‑side JavaScript execution, they load instantly on rural mobile connections and continue to compute perfectly even if you lose network access entirely while on a trail ride.</p>
+    </article>
+
+    <div class="cta-box">
+      <h3><i class="fa-solid fa-heart"></i> Want to support our free resources?</h3>
+      <p>The best way to support us is simply to bookmark this tool on your smartphone and share it with fellow riders, stable owners, and veterinarians.</p>
+      <a href="/" class="btn btn-primary">Explore All Free Tools</a>
+    </div>
+  </div>
+</MainLayout>
+
+<style>
+  .page-wrap { max-width: 800px; margin: 0 auto; padding: 2rem; }
+  .breadcrumbs { font-size: 0.85rem; color: var(--text-muted); margin-bottom: 2rem; display: flex; align-items: center; gap: 0.5rem; }
+  .breadcrumbs a { color: var(--text-muted); text-decoration: none; }
+  .breadcrumbs a:hover { color: var(--primary); }
+  .breadcrumbs i { font-size: 0.7rem; }
+
+  .page-hero { text-align: center; margin-bottom: 2rem; }
+  .hero-icon { font-size: 3rem; color: var(--primary); margin-bottom: 1rem; }
+  .page-hero h1 { font-size: 2rem; font-weight: 800; color: var(--text); margin-bottom: 0.5rem; }
+  .page-hero p { color: var(--text-muted); }
+
+  .content-box { background: white; border: 1px solid var(--border); border-radius: var(--radius); padding: 2rem; color: var(--text-muted); font-size: 0.95rem; line-height: 1.7; }
+  .content-box h2 { font-size: 1.3rem; color: var(--text); margin-top: 2rem; margin-bottom: 0.8rem; display: flex; align-items: center; gap: 0.5rem; }
+  .content-box h2 i { color: var(--primary); }
+  .content-box ul { list-style: none; padding: 0; }
+  .content-box li { padding: 0.4rem 0; display: flex; align-items: baseline; gap: 0.5rem; }
+  .content-box li::before { content: "\f00c"; font-family: "Font Awesome 6 Free"; font-weight: 900; color: var(--primary); font-size: 0.8rem; }
+
+  .cta-box { background: var(--primary-light); border: 1px solid rgba(46,92,62,0.15); border-radius: var(--radius); padding: 2rem; text-align: center; margin-top: 2rem; }
+  .cta-box h3 { font-size: 1.2rem; margin-bottom: 0.5rem; display: flex; align-items: center; justify-content: center; gap: 0.5rem; color: var(--primary); }
+  .cta-box p { color: var(--text-muted); margin-bottom: 1.5rem; }
+  .btn { display: inline-flex; align-items: center; gap: 0.4rem; padding: 0.7rem 1.8rem; border-radius: 50px; font-weight: 600; font-size: 0.9rem; text-decoration: none; transition: 0.2s; }
+  .btn-primary { background: var(--primary); color: white; box-shadow: 0 4px 14px rgba(46,92,62,0.2); }
+  .btn-primary:hover { background: #1e4532; transform: translateY(-1px); }
+</style>

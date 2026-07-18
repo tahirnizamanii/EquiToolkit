@@ -1,0 +1,166 @@
+---
+import MainLayout from '@/layouts/MainLayout.astro';
+import { EQUIPMENT_GUIDES } from '@/data/equipment';
+
+// Interactive sizing helper will be handled by vanilla JS
+---
+
+<MainLayout title="Tack & Equipment Sizing Guides | EquiToolkit" description="Ensure professional fittings, read purchasing advice, use our interactive sizing calculator, and learn expert cleaning tips.">
+  <div class="page-wrap">
+    <nav class="breadcrumbs">
+      <a href="/">Home</a>
+      <i class="fa-solid fa-chevron-right"></i>
+      <span>Equipment Guides</span>
+    </nav>
+
+    <header class="page-hero">
+      <div class="hero-icon"><i class="fa-solid fa-toolbox"></i></div>
+      <h1>Tack & Equipment Sizing Guides</h1>
+      <p>Professional fittings, purchasing advice, interactive sizing calculator, and cleaning tips.</p>
+    </header>
+
+    <div class="layout">
+      <!-- Sidebar selector -->
+      <aside class="sidebar">
+        {EQUIPMENT_GUIDES.map((guide, idx) => (
+          <button class="sidebar-btn" data-index={idx} class:list={[{ active: idx === 0 }]}>
+            <i class="fa-solid fa-chevron-right"></i>
+            <span>{guide.name}</span>
+          </button>
+        ))}
+      </aside>
+
+      <!-- Main content area -->
+      <main class="content" id="equip-content">
+        {EQUIPMENT_GUIDES.map((guide, idx) => (
+          <div class="guide-panel" data-index={idx} class:list={[{ hidden: idx !== 0 }]}>
+            <h2><i class="fa-solid fa-circle-info"></i> {guide.name}</h2>
+            <p class="summary">{guide.summary}</p>
+
+            <div class="grid-2col">
+              <!-- Sizing chart -->
+              <div>
+                <h3><i class="fa-solid fa-ruler-combined"></i> Sizing Chart</h3>
+                <div class="size-table">
+                  <div class="size-header">
+                    <span>Size</span>
+                    <span>Measurements</span>
+                    <span>Fit</span>
+                  </div>
+                  {guide.sizingChart.map(row => (
+                    <div class="size-row">
+                      <span class="size-label">{row.size}</span>
+                      <span class="size-meas">{row.measurements}</span>
+                      <span class="size-desc">{row.description}</span>
+                    </div>
+                  ))}
+                </div>
+
+                <!-- Quick sizing helper -->
+                <div class="sizing-helper">
+                  <h4><i class="fa-solid fa-wand-magic-sparkles"></i> Quick Sizing Helper</h4>
+                  <label>Horse Height (hands)</label>
+                  <input type="number" id="height-input" step="0.1" value="15.2" min="10" max="20" />
+                  <p>Suggested Size: <strong id="suggested-size">Full / Standard</strong></p>
+                </div>
+              </div>
+
+              <!-- Buying advice & maintenance -->
+              <div>
+                <h3><i class="fa-solid fa-circle-question"></i> Buying Advice & Tips</h3>
+                <ul>
+                  {guide.buyingAdvice.map((adv, i) => <li key={i}>{adv}</li>)}
+                </ul>
+                <h3><i class="fa-solid fa-soap"></i> Cleaning & Maintenance</h3>
+                <ul>
+                  {guide.maintenanceTips.map((tip, i) => <li key={i}>{tip}</li>)}
+                </ul>
+              </div>
+            </div>
+          </div>
+        ))}
+      </main>
+    </div>
+  </div>
+</MainLayout>
+
+<script>
+  const buttons = document.querySelectorAll('.sidebar-btn');
+  const panels = document.querySelectorAll('.guide-panel');
+  buttons.forEach(btn => {
+    btn.addEventListener('click', () => {
+      buttons.forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      const idx = btn.dataset.index;
+      panels.forEach(p => p.classList.add('hidden'));
+      const activePanel = document.querySelector(`.guide-panel[data-index="${idx}"]`);
+      if (activePanel) activePanel.classList.remove('hidden');
+    });
+  });
+
+  // Simple sizing logic based on height (generic)
+  const heightInput = document.getElementById('height-input') as HTMLInputElement;
+  const suggested = document.getElementById('suggested-size');
+  function updateSizing() {
+    const h = parseFloat(heightInput.value);
+    let size = 'Full / Standard';
+    if (h < 14.0) size = 'Cob / Small';
+    else if (h >= 16.2) size = 'Oversize / Warmblood';
+    if (suggested) suggested.textContent = size;
+  }
+  heightInput?.addEventListener('input', updateSizing);
+  updateSizing();
+</script>
+
+<style>
+  .page-wrap { max-width: 1200px; margin: 0 auto; padding: 2rem; }
+  .breadcrumbs { font-size: 0.85rem; color: var(--text-muted); margin-bottom: 2rem; display: flex; align-items: center; gap: 0.5rem; }
+  .breadcrumbs a { color: var(--text-muted); text-decoration: none; }
+  .breadcrumbs a:hover { color: var(--primary); }
+  .breadcrumbs i { font-size: 0.7rem; }
+
+  .page-hero { text-align: center; margin-bottom: 2rem; }
+  .hero-icon { font-size: 3rem; color: var(--primary); margin-bottom: 1rem; }
+  .page-hero h1 { font-size: 2rem; font-weight: 800; color: var(--text); }
+  .page-hero p { color: var(--text-muted); }
+
+  .layout { display: grid; grid-template-columns: 240px 1fr; gap: 2rem; align-items: start; }
+  @media (max-width: 768px) { .layout { grid-template-columns: 1fr; } }
+
+  .sidebar { display: flex; flex-direction: column; gap: 0.5rem; background: white; border: 1px solid var(--border); border-radius: var(--radius); padding: 1rem; }
+  .sidebar-btn { display: flex; align-items: center; gap: 0.5rem; padding: 0.6rem 1rem; border: none; background: transparent; color: var(--text-muted); font-size: 0.9rem; font-weight: 500; cursor: pointer; border-radius: var(--radius-sm); transition: 0.2s; text-align: left; }
+  .sidebar-btn:hover { background: var(--bg); color: var(--text); }
+  .sidebar-btn.active { background: var(--primary-light); color: var(--primary); font-weight: 700; }
+  .sidebar-btn i { font-size: 0.7rem; transition: transform 0.2s; }
+  .sidebar-btn.active i { transform: rotate(90deg); }
+
+  .guide-panel { background: white; border: 1px solid var(--border); border-radius: var(--radius); padding: 2rem; box-shadow: var(--shadow-sm); }
+  .guide-panel.hidden { display: none; }
+  .guide-panel h2 { font-size: 1.5rem; font-weight: 700; color: var(--text); margin-bottom: 0.5rem; display: flex; align-items: center; gap: 0.5rem; }
+  .guide-panel h2 i { color: var(--primary); }
+  .summary { color: var(--text-muted); font-size: 0.9rem; margin-bottom: 2rem; }
+
+  .grid-2col { display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; }
+  @media (max-width: 768px) { .grid-2col { grid-template-columns: 1fr; } }
+
+  h3 { font-size: 1.1rem; font-weight: 700; color: var(--text); margin-bottom: 0.8rem; display: flex; align-items: center; gap: 0.5rem; }
+  h3 i { color: var(--primary); }
+
+  .size-table { border: 1px solid var(--border); border-radius: var(--radius-sm); overflow: hidden; margin-bottom: 1.5rem; }
+  .size-header { display: grid; grid-template-columns: 1fr 1.2fr 1fr; background: var(--bg); padding: 0.6rem 1rem; font-weight: 700; font-size: 0.75rem; text-transform: uppercase; color: var(--text-muted); border-bottom: 1px solid var(--border); }
+  .size-row { display: grid; grid-template-columns: 1fr 1.2fr 1fr; padding: 0.5rem 1rem; border-bottom: 1px solid var(--border); font-size: 0.8rem; color: var(--text-muted); }
+  .size-row:last-child { border-bottom: none; }
+  .size-label { font-weight: 700; color: var(--text); }
+  .size-meas { font-family: monospace; }
+  .size-desc { font-size: 0.75rem; }
+
+  .sizing-helper { background: var(--primary-light); border: 1px solid rgba(46,92,62,0.15); border-radius: var(--radius-sm); padding: 1rem; }
+  .sizing-helper h4 { font-size: 0.85rem; margin-bottom: 0.5rem; display: flex; align-items: center; gap: 0.4rem; color: var(--primary); }
+  .sizing-helper label { display: block; font-size: 0.75rem; font-weight: 600; color: var(--text-muted); margin-bottom: 0.3rem; }
+  .sizing-helper input { width: 100%; padding: 0.4rem; border: 1px solid var(--border); border-radius: 6px; font-size: 0.9rem; }
+  .sizing-helper p { margin-top: 0.5rem; font-size: 0.85rem; }
+
+  ul { list-style: none; padding: 0; }
+  li { padding: 0.3rem 0; font-size: 0.85rem; color: var(--text-muted); display: flex; align-items: baseline; gap: 0.5rem; }
+  li::before { content: "\f058"; font-family: "Font Awesome 6 Free"; font-weight: 900; color: var(--primary); font-size: 0.7rem; }
+</style>

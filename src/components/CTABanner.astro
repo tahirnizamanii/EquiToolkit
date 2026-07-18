@@ -1,0 +1,49 @@
+---
+interface Props {
+  title: string;
+  description: string;
+  buttonText: string;
+  buttonHref: string;
+  secondaryButtonText?: string;
+  secondaryButtonHref?: string;
+}
+
+const {
+  title,
+  description,
+  buttonText,
+  buttonHref,
+  secondaryButtonText,
+  secondaryButtonHref,
+} = Astro.props;
+---
+<div class="bg-primary rounded-3xl p-8 md:p-12 text-center text-white relative overflow-hidden shadow-lg">
+  <div class="space-y-5 relative z-10 max-w-xl mx-auto">
+    <h3 class="text-2xl md:text-3xl font-bold font-serif tracking-tight leading-tight">
+      {title}
+    </h3>
+    <p class="text-xs md:text-sm text-primary-light leading-relaxed max-w-lg mx-auto">
+      {description}
+    </p>
+    <div class="pt-2 flex flex-col sm:flex-row items-center justify-center gap-3">
+      <a
+        href={buttonHref}
+        class="w-full sm:w-auto bg-white text-primary hover:bg-bg transition-colors font-bold text-xs sm:text-sm px-6 py-3 rounded-xl shadow-sm text-center"
+      >
+        {buttonText}
+      </a>
+      {secondaryButtonText && secondaryButtonHref && (
+        <a
+          href={secondaryButtonHref}
+          class="w-full sm:w-auto bg-primary border border-primary-light/40 hover:bg-primary-light/10 text-white transition-colors font-bold text-xs sm:text-sm px-6 py-3 rounded-xl text-center"
+        >
+          {secondaryButtonText}
+        </a>
+      )}
+    </div>
+  </div>
+
+  {/* Decorative ambient blobs */}
+  <div class="absolute top-0 right-0 w-64 h-64 bg-white/5 rounded-full filter blur-2xl pointer-events-none"></div>
+  <div class="absolute bottom-0 left-0 w-64 h-64 bg-white/5 rounded-full filter blur-2xl pointer-events-none"></div>
+</div>

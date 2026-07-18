@@ -1,0 +1,10 @@
+---
+import ToolWrapper from '../components/ToolWrapper.astro';
+import DewormingSchedule from '../components/tools/DewormingSchedule';
+import { TOOLS } from '../data';
+
+const tool = TOOLS.find(t => t.id === 'deworming')!;
+---
+<ToolWrapper tool={tool}>
+  <DewormingSchedule client:load />
+</ToolWrapper>

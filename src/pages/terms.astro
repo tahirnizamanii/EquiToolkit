@@ -1,0 +1,49 @@
+---
+import MainLayout from '@/layouts/MainLayout.astro';
+---
+
+<MainLayout title="Terms of Service | EquiToolkit General Agreement" description="Last Updated: July 2026. Simple, clear guidelines for using our digital tools.">
+  <div class="page-wrap">
+    <nav class="breadcrumbs">
+      <a href="/">Home</a>
+      <i class="fa-solid fa-chevron-right"></i>
+      <span>Terms of Service</span>
+    </nav>
+
+    <header class="page-hero">
+      <div class="hero-icon"><i class="fa-solid fa-file-contract"></i></div>
+      <h1>Terms of Service</h1>
+      <p>Last Updated: July 2026. Simple, clear guidelines for using our digital tools.</p>
+    </header>
+
+    <div class="content-box">
+      <h2>1. Agreement of Terms</h2>
+      <p>By visiting EquiToolkit, you agree to these Terms of Service. If you do not agree to all provisions, please exit the page and do not utilize our calculators.</p>
+
+      <h2>2. Educational Disclaimers</h2>
+      <p>All calculators, guidelines, dosage indicators, and calendars are provided for informational, recreational, and educational assistance only. They do not constitute official veterinary care or veterinary prescriptions.</p>
+
+      <h2>3. Permitted Personal Use</h2>
+      <p>You are welcome to print, bookmark, and share pages from our service for personal barnside use, equine breeding facilities, riding clubs, and veterinary student research. You may not scrape our logic or duplicate our styling for commercial resale.</p>
+
+      <h2>4. Limitation of Liabilities</h2>
+      <p>In no event shall EquiToolkit or its developers be liable for any physical injury, equine clinical illness, financial forage budget mismatch, or saddle fitting sores arising from the utilization or interpretation of our tools.</p>
+    </div>
+  </div>
+</MainLayout>
+
+<style>
+  .page-wrap { max-width: 800px; margin: 0 auto; padding: 2rem; }
+  .breadcrumbs { font-size: 0.85rem; color: var(--text-muted); margin-bottom: 2rem; display: flex; align-items: center; gap: 0.5rem; }
+  .breadcrumbs a { color: var(--text-muted); text-decoration: none; }
+  .breadcrumbs a:hover { color: var(--primary); }
+  .breadcrumbs i { font-size: 0.7rem; }
+
+  .page-hero { text-align: center; margin-bottom: 2rem; }
+  .hero-icon { font-size: 3rem; color: var(--primary); margin-bottom: 1rem; }
+  .page-hero h1 { font-size: 2rem; font-weight: 800; color: var(--text); }
+  .page-hero p { color: var(--text-muted); }
+
+  .content-box { background: white; border: 1px solid var(--border); border-radius: var(--radius); padding: 2rem; color: var(--text-muted); font-size: 0.95rem; line-height: 1.7; }
+  .content-box h2 { font-size: 1.3rem; color: var(--text); margin-top: 2rem; margin-bottom: 0.5rem; }
+</style>

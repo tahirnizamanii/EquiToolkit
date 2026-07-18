@@ -1,0 +1,286 @@
+---
+import MainLayout from '@/layouts/MainLayout.astro';
+import { HEALTH_CONDITIONS } from '@/data/health';
+import { TOOLS } from '@/data';
+import { ARTICLES } from '@/data/articles';
+
+const categories = ['All', 'Gastrointestinal', 'Hoof & Skeletal', 'Dermatological', 'Respiratory', 'Endocrine', 'Ophthalmology'];
+---
+
+<MainLayout title="Equine Health Library & Veterinary Database | EquiToolkit" description="Explore our comprehensive veterinary encyclopedia covering common diseases, symptoms, preventions, and when to call the veterinarian.">
+  <div class="page-wrap">
+    <nav class="breadcrumbs">
+      <a href="/">Home</a>
+      <i class="fa-solid fa-chevron-right"></i>
+      <span>Health Library</span>
+    </nav>
+
+    <header class="page-hero">
+      <div class="hero-icon"><i class="fa-solid fa-notes-medical"></i></div>
+      <h1>Equine Health Library</h1>
+      <p>Comprehensive veterinary encyclopedia covering common diseases, symptoms, and when to call the vet.</p>
+    </header>
+
+    <!-- Controls -->
+    <div class="controls">
+      <div class="search-box">
+        <i class="fa-solid fa-magnifying-glass"></i>
+        <input type="text" id="health-search" placeholder="Search symptoms, causes, diseases..." class="search-input" />
+      </div>
+      <div class="filter-tabs" id="cat-tabs">
+        {categories.map(cat => (
+          <button class={`filter-tab ${cat === 'All' ? 'active' : ''}`} data-cat={cat}>
+            {cat}
+          </button>
+        ))}
+      </div>
+    </div>
+
+    <!-- Condition Cards Grid -->
+    <div class="conditions-grid" id="conditions-grid">
+      {HEALTH_CONDITIONS.map(condition => (
+        <div class="condition-card"
+             data-category={condition.category}
+             data-name={condition.name.toLowerCase()}
+             data-symptoms={condition.symptoms.join(' ').toLowerCase()}
+             data-summary={condition.summary.toLowerCase()}
+             onclick="showConditionDetail('{condition.id}')">
+          <div class="card-header">
+            <span class="condition-category"><i class="fa-solid fa-tag"></i> {condition.category}</span>
+            <i class="fa-solid fa-chevron-right"></i>
+          </div>
+          <h3>{condition.name}</h3>
+          <p>{condition.summary.slice(0, 120)}…</p>
+          <span class="vet-reviewed"><i class="fa-solid fa-check-circle"></i> Vet-Reviewed</span>
+        </div>
+      ))}
+    </div>
+
+    <div id="no-results" class="empty-state hidden">
+      <i class="fa-solid fa-circle-exclamation"></i>
+      <p>No conditions match your search or filter.</p>
+    </div>
+
+    <!-- Condition Detail Panel (hidden by default) -->
+    <div id="condition-detail" class="detail-overlay hidden">
+      <div class="detail-content">
+        <button class="btn-close" onclick="closeDetail()">
+          <i class="fa-solid fa-arrow-left"></i> Back to Library
+        </button>
+        <div id="detail-body"></div>
+      </div>
+    </div>
+  </div>
+</MainLayout>
+
+<script>
+  // ---- Search & Filter Logic ----
+  const searchInput = document.getElementById('health-search');
+  const tabButtons = document.querySelectorAll('.filter-tab');
+  const cards = document.querySelectorAll('.condition-card');
+  const noResults = document.getElementById('no-results');
+  let activeCat = 'All';
+  let query = '';
+
+  function filterCards() {
+    let count = 0;
+    cards.forEach(card => {
+      const cat = card.dataset.category;
+      const name = card.dataset.name || '';
+      const symptoms = card.dataset.symptoms || '';
+      const summary = card.dataset.summary || '';
+      const matchCat = activeCat === 'All' || cat === activeCat;
+      const matchSearch = name.includes(query) || symptoms.includes(query) || summary.includes(query);
+      if (matchCat && matchSearch) {
+        card.classList.remove('hidden');
+        count++;
+      } else {
+        card.classList.add('hidden');
+      }
+    });
+    noResults.classList.toggle('hidden', count > 0);
+  }
+
+  searchInput?.addEventListener('input', (e) => {
+    query = (e.target as HTMLInputElement).value.toLowerCase().trim();
+    filterCards();
+  });
+
+  tabButtons.forEach(btn => {
+    btn.addEventListener('click', () => {
+      tabButtons.forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      activeCat = btn.dataset.cat || 'All';
+      filterCards();
+    });
+  });
+
+  // ---- Detail View Logic ----
+  const conditionsMap = {};
+  // Build a map for quick access
+  const conditionsData = [
+    {import.meta.env.DEV}
+  ];
+  // Since Astro data isn't directly available in client-side script unless passed,
+  // we'll embed the full array as JSON.
+  const HEALTH_CONDITIONS = JSON.parse(document.getElementById('health-data')?.textContent || '[]');
+
+  // We'll inject the data as JSON in a script tag (see template below)
+  // Actually, I'll include it directly in the page.
+
+  window.showConditionDetail = function(id: string) {
+    const condition = HEALTH_CONDITIONS.find(c => c.id === id);
+    if (!condition) return;
+    const detailBody = document.getElementById('detail-body');
+    const detailOverlay = document.getElementById('condition-detail');
+    if (!detailBody || !detailOverlay) return;
+
+    detailBody.innerHTML = `
+      <div class="detail-header">
+        <span class="condition-category-badge"><i class="fa-solid fa-tag"></i> ${condition.category}</span>
+        <h2>${condition.name}</h2>
+        <p class="detail-summary">${condition.summary}</p>
+      </div>
+
+      <div class="detail-grid">
+        <div class="detail-section">
+          <h3><i class="fa-solid fa-triangle-exclamation text-red"></i> Common Symptoms</h3>
+          <ul class="symptoms-list">
+            ${condition.symptoms.map(s => `<li>${s}</li>`).join('')}
+          </ul>
+        </div>
+        <div class="detail-section">
+          <h3><i class="fa-solid fa-circle-question"></i> Causes</h3>
+          <ul class="causes-list">
+            ${condition.causes.map(c => `<li>${c}</li>`).join('')}
+          </ul>
+          <h3><i class="fa-solid fa-shield-halved text-green"></i> Prevention</h3>
+          <ul class="prevention-list">
+            ${condition.prevention.map(p => `<li>${p}</li>`).join('')}
+          </ul>
+        </div>
+      </div>
+
+      <div class="vet-call-box">
+        <i class="fa-solid fa-phone-volume"></i>
+        <p><strong>When to Call a Veterinarian:</strong> ${condition.whenToCallVet}</p>
+      </div>
+
+      ${condition.faqs.length > 0 ? `
+        <div class="faq-section">
+          <h3><i class="fa-solid fa-circle-question"></i> Frequently Asked Questions</h3>
+          ${condition.faqs.map(faq => `
+            <details class="faq-item">
+              <summary>${faq.question}</summary>
+              <p>${faq.answer}</p>
+            </details>
+          `).join('')}
+        </div>
+      ` : ''}
+
+      <div class="related-section">
+        ${condition.relatedCalculators.length > 0 ? `
+          <div>
+            <h4><i class="fa-solid fa-calculator"></i> Related Tools</h4>
+            ${condition.relatedCalculators.map(calc => `
+              <a href="${calc.path}" class="related-link">${calc.name}</a>
+            `).join('')}
+          </div>
+        ` : ''}
+        ${condition.relatedArticles.length > 0 ? `
+          <div>
+            <h4><i class="fa-solid fa-book-open"></i> Related Articles</h4>
+            ${condition.relatedArticles.map(art => `
+              <a href="${art.path}" class="related-link">${art.name}</a>
+            `).join('')}
+          </div>
+        ` : ''}
+      </div>
+
+      <div class="references">
+        <h4><i class="fa-solid fa-bookmark"></i> References</h4>
+        <ul>
+          ${condition.references.map(ref => `<li>${ref}</li>`).join('')}
+        </ul>
+      </div>
+    `;
+
+    detailOverlay.classList.remove('hidden');
+    window.scrollTo({ top: 0, behavior: 'instant' });
+  };
+
+  window.closeDetail = function() {
+    document.getElementById('condition-detail')?.classList.add('hidden');
+  };
+</script>
+
+<!-- Embedded JSON data for use in vanilla JS -->
+<script type="application/json" id="health-data">
+  {JSON.stringify(HEALTH_CONDITIONS)}
+</script>
+
+<style>
+  .page-wrap { max-width: 1200px; margin: 0 auto; padding: 2rem; }
+  .breadcrumbs { font-size: 0.85rem; color: var(--text-muted); margin-bottom: 2rem; display: flex; align-items: center; gap: 0.5rem; }
+  .breadcrumbs a { color: var(--text-muted); text-decoration: none; }
+  .breadcrumbs a:hover { color: var(--primary); }
+  .breadcrumbs i { font-size: 0.7rem; }
+
+  .page-hero { text-align: center; margin-bottom: 2rem; }
+  .hero-icon { font-size: 3rem; color: var(--primary); margin-bottom: 1rem; }
+  .page-hero h1 { font-size: 2rem; font-weight: 800; color: var(--text); }
+  .page-hero p { color: var(--text-muted); }
+
+  .controls { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 1rem; margin-bottom: 2rem; }
+  .search-box { position: relative; flex: 1; min-width: 250px; }
+  .search-box i { position: absolute; left: 14px; top: 50%; transform: translateY(-50%); color: var(--text-muted); }
+  .search-input { width: 100%; padding: 0.6rem 1rem 0.6rem 2.5rem; border: 1px solid var(--border); border-radius: 50px; font-size: 0.9rem; background: white; transition: border-color 0.2s; }
+  .search-input:focus { outline: none; border-color: var(--primary); box-shadow: 0 0 0 3px rgba(46,92,62,0.1); }
+  .filter-tabs { display: flex; gap: 0.5rem; flex-wrap: wrap; }
+  .filter-tab { background: white; border: 1px solid var(--border); color: var(--text-muted); padding: 0.5rem 1.2rem; border-radius: 50px; font-size: 0.8rem; font-weight: 600; cursor: pointer; transition: 0.2s; }
+  .filter-tab.active { background: var(--primary); border-color: var(--primary); color: white; }
+
+  .conditions-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1.5rem; }
+  .condition-card { background: white; border: 1px solid var(--border); border-radius: var(--radius); padding: 1.5rem; box-shadow: var(--shadow-sm); cursor: pointer; transition: 0.2s; display: flex; flex-direction: column; }
+  .condition-card:hover { transform: translateY(-4px); box-shadow: var(--shadow-lg); border-color: var(--accent); }
+  .condition-card.hidden { display: none; }
+  .card-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem; }
+  .condition-category { font-size: 0.7rem; font-weight: 600; color: var(--primary); background: var(--primary-light); padding: 0.2rem 0.7rem; border-radius: 20px; }
+  .card-header i { color: var(--text-muted); font-size: 0.8rem; }
+  .condition-card h3 { font-size: 1.1rem; font-weight: 700; margin-bottom: 0.5rem; }
+  .condition-card p { font-size: 0.85rem; color: var(--text-muted); flex: 1; margin-bottom: 1rem; }
+  .vet-reviewed { font-size: 0.75rem; color: var(--primary); font-weight: 600; display: flex; align-items: center; gap: 0.3rem; }
+  .empty-state { text-align: center; padding: 3rem; color: var(--text-muted); background: white; border-radius: var(--radius); border: 1px solid var(--border); }
+  .hidden { display: none; }
+
+  /* Detail overlay */
+  .detail-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 200; overflow-y: auto; padding: 2rem; display: flex; justify-content: center; align-items: flex-start; }
+  .detail-content { background: white; border-radius: var(--radius); max-width: 900px; width: 100%; padding: 2rem; box-shadow: var(--shadow-lg); margin-top: 2rem; }
+  .btn-close { background: none; border: none; color: var(--text-muted); font-weight: 600; font-size: 0.9rem; cursor: pointer; display: flex; align-items: center; gap: 0.5rem; margin-bottom: 1.5rem; }
+  .btn-close:hover { color: var(--primary); }
+  .detail-header { margin-bottom: 2rem; }
+  .condition-category-badge { font-size: 0.75rem; font-weight: 600; color: var(--primary); background: var(--primary-light); padding: 0.2rem 0.8rem; border-radius: 20px; display: inline-block; margin-bottom: 0.5rem; }
+  .detail-header h2 { font-size: 2rem; font-weight: 800; color: var(--text); margin-bottom: 0.5rem; }
+  .detail-summary { font-size: 0.95rem; color: var(--text-muted); line-height: 1.6; }
+  .detail-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; margin-bottom: 2rem; }
+  @media (max-width: 768px) { .detail-grid { grid-template-columns: 1fr; } }
+  .detail-section h3 { font-size: 1.1rem; margin-bottom: 0.8rem; display: flex; align-items: center; gap: 0.5rem; color: var(--text); }
+  .text-red { color: #e74c3c; }
+  .text-green { color: #2ecc71; }
+  ul { list-style: none; padding: 0; }
+  li { font-size: 0.85rem; color: var(--text-muted); padding: 0.3rem 0; display: flex; align-items: baseline; gap: 0.5rem; }
+  li::before { content: "\f00c"; font-family: "Font Awesome 6 Free"; font-weight: 900; color: var(--primary); font-size: 0.7rem; }
+  .vet-call-box { background: #fff5f5; border: 2px solid #e74c3c; border-radius: var(--radius-sm); padding: 1.2rem; display: flex; gap: 1rem; align-items: flex-start; color: #a71d2a; font-size: 0.9rem; margin-bottom: 2rem; }
+  .vet-call-box i { color: #e74c3c; font-size: 1.4rem; margin-top: 0.2rem; }
+  .faq-section { margin-bottom: 2rem; }
+  .faq-section h3 { font-size: 1.1rem; margin-bottom: 1rem; }
+  .faq-item { border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 0.8rem 1rem; margin-bottom: 0.5rem; }
+  .faq-item summary { font-weight: 600; cursor: pointer; }
+  .faq-item p { margin-top: 0.5rem; font-size: 0.85rem; color: var(--text-muted); }
+  .related-section { display: flex; gap: 2rem; margin-bottom: 2rem; }
+  .related-link { display: block; padding: 0.4rem 0; color: var(--primary); font-weight: 500; font-size: 0.9rem; text-decoration: none; }
+  .related-link:hover { text-decoration: underline; }
+  .references { background: var(--bg); padding: 1rem; border-radius: var(--radius-sm); font-size: 0.8rem; color: var(--text-muted); }
+  .references ul { list-style: disc; padding-left: 1.5rem; }
+  .references li { display: list-item; }
+</style>

@@ -1,0 +1,10 @@
+---
+import ToolWrapper from '../components/ToolWrapper.astro';
+import SaddleFitGuide from '../components/tools/SaddleFitGuide';
+import { TOOLS } from '../data';
+
+const tool = TOOLS.find(t => t.id === 'saddle-fit')!;
+---
+<ToolWrapper tool={tool}>
+  <SaddleFitGuide client:load />
+</ToolWrapper>

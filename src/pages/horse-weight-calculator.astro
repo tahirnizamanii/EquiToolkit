@@ -1,0 +1,10 @@
+---
+import ToolWrapper from '../components/ToolWrapper.astro';
+import WeightCalculator from '../components/tools/WeightCalculator';
+import { TOOLS } from '../data';
+
+const tool = TOOLS.find(t => t.id === 'weight-calculator')!;
+---
+<ToolWrapper tool={tool}>
+  <WeightCalculator client:load />
+</ToolWrapper>

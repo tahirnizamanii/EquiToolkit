@@ -1,0 +1,266 @@
+---
+import MainLayout from '@/layouts/MainLayout.astro';
+import { TOOLS } from '@/data';
+import { HEALTH_CONDITIONS } from '@/data/health';
+import { ARTICLES } from '@/data/articles';
+import { PRINTABLES } from '@/data/printables';
+
+// Tool icons map (same as always)
+const toolIcons: Record<string, string> = {
+  'weight-calculator': 'fa-solid fa-scale-balanced',
+  'blanketing-guide': 'fa-solid fa-temperature-three-quarters',
+  'foal-color-predictor': 'fa-solid fa-dna',
+  'deworming-schedule': 'fa-solid fa-capsules',
+  'mare-gestation-calculator': 'fa-solid fa-cake-candles',
+  'feed-cost-calculator': 'fa-solid fa-calculator',
+  'riding-log': 'fa-solid fa-book-open',
+  'show-checklist': 'fa-solid fa-list-check',
+  'body-condition-scorer': 'fa-solid fa-weight-scale',
+  'horse-age-converter': 'fa-solid fa-clock-rotate-left',
+  'medication-dosage': 'fa-solid fa-syringe',
+  'saddle-fit-guide': 'fa-solid fa-horse',
+  'height-converter': 'fa-solid fa-ruler-combined',
+  'water-intake-calculator': 'fa-solid fa-droplet',
+  'boarding-cost': 'fa-solid fa-coins',
+  'pasture-size-calculator': 'fa-solid fa-tree',
+};
+
+// Journey steps: a curated list of tasks with the best tools, guides, and resources
+const steps = [
+  {
+    title: 'Step 1: Know Your Horse’s Weight',
+    desc: 'Accurate weight is the foundation for feeding, medication, and health monitoring. Use our free calculator right now.',
+    tools: ['weight-calculator', 'height-converter'],
+    tips: 'Measure heart girth and body length with a soft tape. For growing or pregnant horses, recheck every month.'
+  },
+  {
+    title: 'Step 2: Set Up a Feeding Plan',
+    desc: 'Learn what and how much to feed based on weight, activity level, and forage quality.',
+    tools: ['feed-cost-calculator', 'water-intake-calculator', 'pasture-size-calculator'],
+    tips: 'Start with free-choice grass hay and a ration balancer. Overfeeding grain is a common mistake.'
+  },
+  {
+    title: 'Step 3: Schedule Essential Care',
+    desc: 'Keep up with vaccinations, deworming, farrier visits, and dental checks.',
+    tools: ['deworming-schedule', 'mare-gestation-calculator'],
+    health: ['colic', 'laminitis', 'thrush', 'equine-influenza'],
+    printables: ['vaccination-record', 'farrier-log', 'health-record'],
+    tips: 'A negative Coggins test and a health certificate are required for travel. Find a local large‑animal vet before an emergency.'
+  },
+  {
+    title: 'Step 4: Prepare Your Stable & Equipment',
+    desc: 'From stall bedding to tack, set up a safe, comfortable environment.',
+    tools: ['boarding-cost-calculator', 'saddle-fit-guide'],
+    printables: ['stable-setup-checklist', 'tack-cleaning-log'],
+    tips: 'At minimum, you need: halter, lead rope, grooming kit, first‑aid kit, and a sturdy water bucket.'
+  },
+  {
+    title: 'Step 5: Understand Your Horse’s Health',
+    desc: 'Know the early signs of common issues like colic, lameness, or skin problems.',
+    health: ['colic', 'laminitis', 'rain-rot', 'sweet-itch', 'ulcers'],
+    tips: 'Check your horse daily for cuts, heat in hooves, and changes in appetite or manure.'
+  },
+  {
+    title: 'Step 6: Keep Records & Budget',
+    desc: 'Track expenses, riding sessions, and medical history to stay organised.',
+    tools: ['riding-log', 'boarding-cost-calculator'],
+    printables: ['monthly-expense-tracker'],
+    tips: 'Set aside $1,500–$2,000 for unexpected vet bills. Many owners underestimate annual costs.'
+  },
+  {
+    title: 'Step 7: Continue Learning',
+    desc: 'Explore our breed guides, educational articles, and health library.',
+    breeds: ['quarter-horse', 'arabian', 'thoroughbred', 'morgan'],
+    articles: [], // will be filled by related articles from data
+    tips: 'Join a local riding club or online community. The more you learn, the better partner you’ll be for your horse.'
+  }
+];
+---
+
+<MainLayout title="Just Bought Your First Horse? Free Tools & Guide | EquiToolkit" description="Everything you need to care for your new horse: weight calculator, feeding planner, vaccination schedule, stable checklist, budget estimator, and health resources.">
+  <div class="page-wrap">
+    <nav class="breadcrumbs">
+      <a href="/">Home</a>
+      <i class="fa-solid fa-chevron-right"></i>
+      <span>First Horse Owner Guide</span>
+    </nav>
+
+    <header class="page-hero">
+      <div class="hero-icon"><i class="fa-solid fa-hat-cowboy"></i></div>
+      <h1>Just Bought Your First Horse?<br>Start Here – Free Tools & Expert Guide</h1>
+      <p>Overwhelmed? We'll walk you through everything: weight, feeding, health, stable setup, budgeting, and ongoing care. All tools are free, no sign‑up, works offline.</p>
+    </header>
+
+    <!-- Journey Steps -->
+    <div class="journey-steps">
+      {steps.map((step, idx) => (
+        <div class="step-card">
+          <div class="step-number">{idx + 1}</div>
+          <h2>{step.title}</h2>
+          <p>{step.desc}</p>
+          
+          {step.tools && step.tools.length > 0 && (
+            <div class="tool-chips">
+              {step.tools.map(toolId => {
+                const tool = TOOLS.find(t => t.id === toolId);
+                if (!tool) return null;
+                return (
+                  <a href={tool.path} class="chip">
+                    <i class={toolIcons[tool.id] || 'fa-solid fa-horse'}></i>
+                    <span>{tool.title}</span>
+                  </a>
+                );
+              })}
+            </div>
+          )}
+
+          {step.health && step.health.length > 0 && (
+            <div class="health-links">
+              <strong><i class="fa-solid fa-notes-medical"></i> Related Health Topics:</strong>
+              <div class="link-list">
+                {step.health.map(hId => {
+                  const condition = HEALTH_CONDITIONS.find(c => c.id === hId);
+                  if (!condition) return null;
+                  return (
+                    <a href={`/health-library?condition=${condition.id}`} class="health-link">
+                      {condition.name}
+                    </a>
+                  );
+                })}
+              </div>
+            </div>
+          )}
+
+          {step.printables && step.printables.length > 0 && (
+            <div class="printable-links">
+              <strong><i class="fa-solid fa-file-pdf"></i> Printable Resources:</strong>
+              <div class="link-list">
+                {step.printables.map(pId => {
+                  const printable = PRINTABLES.find(p => p.id === pId);
+                  if (!printable) return null;
+                  return (
+                    <a href={`/printables/${printable.id}`} class="printable-link">
+                      {printable.title}
+                    </a>
+                  );
+                })}
+              </div>
+            </div>
+          )}
+
+          {step.breeds && step.breeds.length > 0 && (
+            <div class="breed-links">
+              <strong><i class="fa-solid fa-horse-head"></i> Popular Breeds:</strong>
+              <div class="link-list">
+                {step.breeds.map(bId => {
+                  const breed = BREEDS.find(b => b.id === bId);
+                  if (!breed) return null;
+                  return (
+                    <a href={`/breeds/${breed.id}`} class="breed-link">
+                      {breed.name}
+                    </a>
+                  );
+                })}
+              </div>
+            </div>
+          )}
+
+          {step.tips && (
+            <div class="tip-box">
+              <i class="fa-solid fa-lightbulb"></i>
+              <span>{step.tips}</span>
+            </div>
+          )}
+        </div>
+      ))}
+    </div>
+
+    <div class="cta-section">
+      <h2><i class="fa-solid fa-heart"></i> You've Got This!</h2>
+      <p>Bookmark EquiToolkit on your phone. Every tool works offline – perfect for the barn.</p>
+      <a href="/" class="btn btn-white"><i class="fa-solid fa-home"></i> Back to All Tools</a>
+    </div>
+  </div>
+</MainLayout>
+
+<style>
+  .page-wrap { max-width: 900px; margin: 0 auto; padding: 2rem; }
+  .breadcrumbs { font-size: 0.85rem; color: var(--text-muted); margin-bottom: 2rem; display: flex; align-items: center; gap: 0.5rem; }
+  .breadcrumbs a { color: var(--text-muted); text-decoration: none; }
+  .breadcrumbs a:hover { color: var(--primary); }
+  .breadcrumbs i { font-size: 0.7rem; }
+
+  .page-hero { text-align: center; margin-bottom: 3rem; }
+  .hero-icon { font-size: 3rem; color: var(--primary); margin-bottom: 1rem; }
+  .page-hero h1 { font-size: 2rem; font-weight: 800; color: var(--text); line-height: 1.3; }
+  .page-hero p { color: var(--text-muted); font-size: 1rem; margin-top: 0.8rem; }
+
+  .journey-steps { display: flex; flex-direction: column; gap: 2rem; }
+  .step-card {
+    background: white;
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 2rem;
+    box-shadow: var(--shadow-sm);
+    position: relative;
+  }
+  .step-number {
+    position: absolute;
+    top: -16px;
+    left: -16px;
+    width: 36px;
+    height: 36px;
+    background: var(--primary);
+    color: white;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 800;
+    font-size: 1rem;
+  }
+  .step-card h2 { font-size: 1.4rem; font-weight: 700; color: var(--text); margin-bottom: 0.5rem; }
+  .step-card p { font-size: 0.95rem; color: var(--text-muted); line-height: 1.6; margin-bottom: 1.2rem; }
+
+  .tool-chips { display: flex; flex-wrap: wrap; gap: 0.5rem; margin-bottom: 1rem; }
+  .chip {
+    display: inline-flex; align-items: center; gap: 0.4rem;
+    background: var(--primary-light); color: var(--primary); border: 1px solid rgba(46,92,62,0.2);
+    padding: 0.4rem 1rem; border-radius: 50px; font-size: 0.85rem; font-weight: 600;
+    text-decoration: none; transition: 0.2s;
+  }
+  .chip:hover { background: var(--primary); color: white; }
+
+  .health-links, .printable-links, .breed-links { margin-bottom: 1rem; }
+  .health-links strong, .printable-links strong, .breed-links strong {
+    display: block; font-size: 0.85rem; color: var(--text); margin-bottom: 0.4rem;
+    display: flex; align-items: center; gap: 0.4rem;
+  }
+  .link-list { display: flex; flex-wrap: wrap; gap: 0.4rem; }
+  .health-link, .printable-link, .breed-link {
+    background: var(--bg); border: 1px solid var(--border); padding: 0.3rem 0.8rem;
+    border-radius: 20px; font-size: 0.8rem; color: var(--text-muted); text-decoration: none;
+    transition: 0.2s;
+  }
+  .health-link:hover, .printable-link:hover, .breed-link:hover {
+    background: var(--primary-light); color: var(--primary); border-color: var(--primary);
+  }
+
+  .tip-box {
+    background: #fff8e1; border: 1px solid #ffc107; border-radius: var(--radius-sm);
+    padding: 0.8rem 1rem; display: flex; align-items: flex-start; gap: 0.6rem;
+    font-size: 0.85rem; color: #8b6914; margin-top: 1rem;
+  }
+  .tip-box i { color: #f39c12; font-size: 1rem; margin-top: 0.1rem; }
+
+  .cta-section { background: var(--primary); text-align: center; padding: 3rem 2rem; color: white; border-radius: var(--radius); margin-top: 3rem; }
+  .cta-section h2 { font-size: 1.8rem; margin-bottom: 0.5rem; display: flex; justify-content: center; align-items: center; gap: 0.5rem; }
+  .cta-section p { opacity: 0.85; margin-bottom: 1.5rem; }
+  .btn { display: inline-flex; align-items: center; gap: 0.4rem; padding: 0.7rem 1.8rem; border-radius: 50px; font-weight: 600; font-size: 0.9rem; text-decoration: none; transition: 0.2s; }
+  .btn-white { background: white; color: var(--primary); box-shadow: 0 4px 14px rgba(0,0,0,0.1); }
+  .btn-white:hover { background: #f0f0f0; transform: translateY(-1px); }
+
+  @media (max-width: 768px) {
+    .step-card { padding: 1.5rem; }
+  }
+</style>

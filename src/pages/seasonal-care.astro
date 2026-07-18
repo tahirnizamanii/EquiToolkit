@@ -1,0 +1,153 @@
+---
+import MainLayout from '@/layouts/MainLayout.astro';
+import { SEASONAL_GUIDES } from '@/data/careCenter';
+import { TOOLS } from '@/data';
+
+// Map tool ids to icons (for related tools)
+const toolIcons: Record<string, string> = {
+  'weight-calculator': 'fa-solid fa-scale-balanced',
+  'blanketing-guide': 'fa-solid fa-temperature-three-quarters',
+  'foal-color-predictor': 'fa-solid fa-dna',
+  'deworming-schedule': 'fa-solid fa-capsules',
+  'mare-gestation-calculator': 'fa-solid fa-cake-candles',
+  'feed-cost-calculator': 'fa-solid fa-calculator',
+  'riding-log': 'fa-solid fa-book-open',
+  'show-checklist': 'fa-solid fa-list-check',
+  'body-condition-scorer': 'fa-solid fa-weight-scale',
+  'horse-age-converter': 'fa-solid fa-clock-rotate-left',
+  'medication-dosage': 'fa-solid fa-syringe',
+  'saddle-fit-guide': 'fa-solid fa-horse',
+};
+---
+
+<MainLayout title="Seasonal Horse Care Center | EquiToolkit" description="Navigate seasonal shifts comfortably. Browse our evergreen vet guides, custom management tips, and seasonal checklists.">
+  <div class="page-wrap">
+    <nav class="breadcrumbs">
+      <a href="/">Home</a>
+      <i class="fa-solid fa-chevron-right"></i>
+      <span>Seasonal Care</span>
+    </nav>
+
+    <header class="page-hero">
+      <div class="hero-icon"><i class="fa-solid fa-calendar-days"></i></div>
+      <h1>Seasonal Horse Care Center</h1>
+      <p>Navigate seasonal shifts with expert checklists, management tips, and related tools.</p>
+    </header>
+
+    <!-- Season Tabs -->
+    <div class="tabs" id="season-tabs">
+      {SEASONAL_GUIDES.map((guide, idx) => (
+        <button class="tab" data-index={idx} class:list={[{ active: idx === 0 }]}>
+          <i class={`fa-solid fa-${guide.season === 'Spring' ? 'seedling' : guide.season === 'Summer' ? 'sun' : guide.season === 'Autumn' ? 'leaf' : 'snowflake'}`}></i>
+          <span>{guide.season}</span>
+        </button>
+      ))}
+    </div>
+
+    <!-- Content panels -->
+    {SEASONAL_GUIDES.map((guide, idx) => (
+      <div class="season-panel" data-index={idx} class:list={[{ hidden: idx !== 0 }]}>
+        <h2><i class={`fa-solid fa-${guide.season === 'Spring' ? 'seedling' : guide.season === 'Summer' ? 'sun' : guide.season === 'Autumn' ? 'leaf' : 'snowflake'}`}></i> {guide.title}</h2>
+        <p class="summary">{guide.summary}</p>
+
+        <div class="grid-2col">
+          <div>
+            <h3><i class="fa-solid fa-clipboard-list"></i> {guide.season} Checklist</h3>
+            <ul class="checklist">
+              {guide.checklist.map((item, i) => <li key={i}>{item}</li>)}
+            </ul>
+          </div>
+          <div>
+            <h3><i class="fa-solid fa-graduation-cap"></i> Expert Management Tips</h3>
+            <div class="tips-list">
+              {guide.tips.map((tip, i) => (
+                <div class="tip-card">
+                  <strong>{tip.title}</strong>
+                  <p>{tip.description}</p>
+                </div>
+              ))}
+            </div>
+
+            {guide.relatedCalculators && guide.relatedCalculators.length > 0 && (
+              <div class="related-tools">
+                <h4><i class="fa-solid fa-toolbox"></i> Recommended Tools</h4>
+                <div class="tools-grid">
+                  {guide.relatedCalculators.map(calc => {
+                    const tool = TOOLS.find(t => t.path === calc.path);
+                    return (
+                      <a href={calc.path} class="tool-chip">
+                        <i class={toolIcons[tool?.id || ''] || 'fa-solid fa-horse'}></i>
+                        <span>{calc.name}</span>
+                      </a>
+                    );
+                  })}
+                </div>
+              </div>
+            )}
+          </div>
+        </div>
+      </div>
+    ))}
+  </div>
+</MainLayout>
+
+<script>
+  const tabs = document.querySelectorAll('.tab');
+  const panels = document.querySelectorAll('.season-panel');
+  tabs.forEach(tab => {
+    tab.addEventListener('click', () => {
+      tabs.forEach(t => t.classList.remove('active'));
+      tab.classList.add('active');
+      const idx = tab.dataset.index;
+      panels.forEach(p => p.classList.add('hidden'));
+      const activePanel = document.querySelector(`.season-panel[data-index="${idx}"]`);
+      if (activePanel) activePanel.classList.remove('hidden');
+    });
+  });
+</script>
+
+<style>
+  .page-wrap { max-width: 1000px; margin: 0 auto; padding: 2rem; }
+  .breadcrumbs { font-size: 0.85rem; color: var(--text-muted); margin-bottom: 2rem; display: flex; align-items: center; gap: 0.5rem; }
+  .breadcrumbs a { color: var(--text-muted); text-decoration: none; }
+  .breadcrumbs a:hover { color: var(--primary); }
+  .breadcrumbs i { font-size: 0.7rem; }
+
+  .page-hero { text-align: center; margin-bottom: 2rem; }
+  .hero-icon { font-size: 3rem; color: var(--primary); margin-bottom: 1rem; }
+  .page-hero h1 { font-size: 2rem; font-weight: 800; color: var(--text); }
+  .page-hero p { color: var(--text-muted); }
+
+  .tabs { display: flex; gap: 0.5rem; margin-bottom: 2rem; flex-wrap: wrap; justify-content: center; }
+  .tab { display: flex; align-items: center; gap: 0.4rem; padding: 0.6rem 1.5rem; border: 1px solid var(--border); border-radius: 50px; background: white; color: var(--text-muted); font-weight: 600; font-size: 0.9rem; cursor: pointer; transition: 0.2s; }
+  .tab.active { background: var(--primary); border-color: var(--primary); color: white; }
+  .tab i { font-size: 1rem; }
+
+  .season-panel { background: white; border: 1px solid var(--border); border-radius: var(--radius); padding: 2rem; box-shadow: var(--shadow-sm); }
+  .season-panel.hidden { display: none; }
+  .season-panel h2 { font-size: 1.8rem; font-weight: 700; color: var(--text); margin-bottom: 0.5rem; display: flex; align-items: center; gap: 0.5rem; }
+  .season-panel h2 i { color: var(--primary); }
+  .summary { color: var(--text-muted); margin-bottom: 2rem; font-size: 0.95rem; }
+
+  .grid-2col { display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; }
+  @media (max-width: 768px) { .grid-2col { grid-template-columns: 1fr; } }
+
+  h3 { font-size: 1.2rem; font-weight: 700; color: var(--text); margin-bottom: 1rem; display: flex; align-items: center; gap: 0.5rem; }
+  h3 i { color: var(--primary); }
+
+  .checklist { list-style: none; padding: 0; }
+  .checklist li { padding: 0.5rem 0; border-bottom: 1px solid var(--border); font-size: 0.9rem; color: var(--text-muted); display: flex; align-items: baseline; gap: 0.5rem; }
+  .checklist li::before { content: "\f00c"; font-family: "Font Awesome 6 Free"; font-weight: 900; color: var(--primary); font-size: 0.8rem; }
+
+  .tips-list { display: flex; flex-direction: column; gap: 1rem; }
+  .tip-card { background: var(--bg); border-radius: var(--radius-sm); padding: 1rem; }
+  .tip-card strong { display: block; color: var(--primary); font-size: 0.85rem; margin-bottom: 0.3rem; }
+  .tip-card p { font-size: 0.8rem; color: var(--text-muted); margin: 0; }
+
+  .related-tools { margin-top: 1.5rem; }
+  .related-tools h4 { font-size: 0.95rem; margin-bottom: 0.8rem; display: flex; align-items: center; gap: 0.4rem; color: var(--text); }
+  .tools-grid { display: flex; flex-wrap: wrap; gap: 0.5rem; }
+  .tool-chip { display: flex; align-items: center; gap: 0.4rem; padding: 0.4rem 1rem; background: var(--primary-light); border: 1px solid rgba(46,92,62,0.15); border-radius: 50px; text-decoration: none; color: var(--primary); font-size: 0.8rem; font-weight: 600; transition: background 0.2s; }
+  .tool-chip:hover { background: var(--primary); color: white; }
+  .tool-chip i { font-size: 0.8rem; }
+</style>

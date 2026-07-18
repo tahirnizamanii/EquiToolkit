@@ -1,0 +1,242 @@
+---
+import MainLayout from '@/layouts/MainLayout.astro';
+import { BREEDS } from '@/data/breeds';
+
+export function getStaticPaths() {
+  return BREEDS.map(b => ({ params: { slug: b.id } }));
+}
+
+const { slug } = Astro.params;
+const breed = BREEDS.find(b => b.id === slug);
+
+if (!breed) {
+  return <MainLayout title="Breed Not Found"><p>Sorry, that breed doesn't exist.</p></MainLayout>;
+}
+---
+
+<MainLayout title={`${breed.name} – Breed Profile | EquiToolkit`} description={breed.overview}>
+  <div class="page-wrap">
+    <nav class="breadcrumbs">
+      <a href="/">Home</a>
+      <i class="fa-solid fa-chevron-right"></i>
+      <a href="/breeds">Breeds</a>
+      <i class="fa-solid fa-chevron-right"></i>
+      <span>{breed.name}</span>
+    </nav>
+
+    <div class="detail-layout">
+      <main class="detail-main">
+        <h1>{breed.name}</h1>
+        <p class="overview">{breed.overview}</p>
+
+        <div class="quick-stats">
+          <div class="stat">
+            <span class="stat-label">Height</span>
+            <span class="stat-value">{breed.heightRange}</span>
+          </div>
+          <div class="stat">
+            <span class="stat-label">Weight</span>
+            <span class="stat-value">{breed.weightRange}</span>
+          </div>
+          <div class="stat">
+            <span class="stat-label">Lifespan</span>
+            <span class="stat-value">{breed.lifespan}</span>
+          </div>
+          <div class="stat">
+            <span class="stat-label">Temperament</span>
+            <span class="stat-value">{breed.temperament.split(',')[0]}</span>
+          </div>
+        </div>
+
+        <section class="detail-section">
+          <h2><i class="fa-solid fa-book-open"></i> History & Origin</h2>
+          <p>{breed.history}</p>
+        </section>
+
+        <section class="detail-section">
+          <h2><i class="fa-solid fa-utensils"></i> Feeding & Dietary Needs</h2>
+          <p>{breed.feeding}</p>
+        </section>
+      </main>
+
+      <aside class="detail-sidebar">
+        <h3><i class="fa-solid fa-palette"></i> Standard Colors</h3>
+        <div class="color-chips">
+          {breed.colors.map(c => <span class="chip">{c}</span>)}
+        </div>
+
+        <h3><i class="fa-solid fa-flag-checkered"></i> Typical Disciplines</h3>
+        <div class="discipline-chips">
+          {breed.uses.map(u => <span class="chip active">{u}</span>)}
+        </div>
+
+        <h3><i class="fa-solid fa-heart-pulse"></i> Health Risks</h3>
+        <ul class="health-list">
+          {breed.healthIssues.map(hi => <li>{hi}</li>)}
+        </ul>
+
+        <a href="/horse-weight-calculator" class="cta-link">
+          <i class="fa-solid fa-scale-balanced"></i> Estimate This Breed's Weight
+        </a>
+      </aside>
+    </div>
+  </div>
+</MainLayout>
+
+<style>
+  .page-wrap {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 2rem;
+  }
+  .breadcrumbs {
+    font-size: 0.85rem;
+    color: var(--text-muted);
+    margin-bottom: 2rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+  .breadcrumbs a { color: var(--text-muted); text-decoration: none; }
+  .breadcrumbs a:hover { color: var(--primary); }
+  .breadcrumbs i { font-size: 0.7rem; }
+
+  .detail-layout {
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+    gap: 2rem;
+    background: white;
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 2rem;
+    box-shadow: var(--shadow-sm);
+  }
+  @media (max-width: 768px) {
+    .detail-layout { grid-template-columns: 1fr; }
+  }
+
+  .detail-main h1 {
+    font-size: 2rem;
+    font-weight: 800;
+    color: var(--text);
+    margin-bottom: 0.8rem;
+  }
+  .overview {
+    color: var(--text-muted);
+    font-size: 0.95rem;
+    margin-bottom: 1.5rem;
+    line-height: 1.6;
+  }
+
+  .quick-stats {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1rem;
+    margin-bottom: 2rem;
+  }
+  .stat {
+    background: var(--bg);
+    border-radius: var(--radius-sm);
+    padding: 1rem;
+    text-align: center;
+  }
+  .stat-label {
+    display: block;
+    font-size: 0.7rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    margin-bottom: 0.3rem;
+  }
+  .stat-value {
+    font-size: 1rem;
+    font-weight: 700;
+    color: var(--primary);
+  }
+
+  .detail-section {
+    margin-bottom: 2rem;
+  }
+  .detail-section h2 {
+    font-size: 1.2rem;
+    font-weight: 700;
+    color: var(--text);
+    margin-bottom: 0.5rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+  .detail-section h2 i { color: var(--primary); }
+  .detail-section p {
+    color: var(--text-muted);
+    font-size: 0.9rem;
+    line-height: 1.6;
+  }
+
+  .detail-sidebar h3 {
+    font-size: 1rem;
+    font-weight: 700;
+    color: var(--text);
+    margin-bottom: 0.8rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+  .detail-sidebar h3 i { color: var(--primary); }
+  .color-chips, .discipline-chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin-bottom: 1.5rem;
+  }
+  .chip {
+    background: var(--bg);
+    border: 1px solid var(--border);
+    padding: 0.3rem 0.8rem;
+    border-radius: 20px;
+    font-size: 0.8rem;
+    color: var(--text-muted);
+  }
+  .chip.active {
+    background: var(--primary-light);
+    border-color: var(--primary);
+    color: var(--primary);
+    font-weight: 600;
+  }
+  .health-list {
+    list-style: none;
+    padding: 0;
+    margin-bottom: 1.5rem;
+  }
+  .health-list li {
+    font-size: 0.85rem;
+    color: var(--text-muted);
+    padding: 0.3rem 0;
+    display: flex;
+    align-items: baseline;
+    gap: 0.5rem;
+  }
+  .health-list li::before {
+    content: "\f071";
+    font-family: "Font Awesome 6 Free";
+    font-weight: 900;
+    color: var(--accent);
+    font-size: 0.7rem;
+  }
+  .cta-link {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    background: var(--primary);
+    color: white;
+    padding: 0.8rem 1.2rem;
+    border-radius: 50px;
+    text-decoration: none;
+    font-weight: 600;
+    font-size: 0.9rem;
+    justify-content: center;
+    margin-top: 1rem;
+    transition: background 0.2s;
+  }
+  .cta-link:hover { background: #1e4532; }
+</style>

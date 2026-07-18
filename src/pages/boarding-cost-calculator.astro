@@ -1,0 +1,11 @@
+---
+import ToolWrapper from '@/components/ToolWrapper.astro';
+import BoardingCost from '@/components/tools/BoardingCost';
+import { TOOLS } from '@/data';
+
+const tool = TOOLS.find(t => t.id === 'boarding-cost')!;
+---
+
+<ToolWrapper tool={tool}>
+  <BoardingCost client:load />
+</ToolWrapper>

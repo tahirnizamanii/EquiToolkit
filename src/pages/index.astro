@@ -1,0 +1,469 @@
+---
+import MainLayout from '@/layouts/MainLayout.astro';
+import { TOOLS } from '@/data';
+import { BREEDS } from '@/data/breeds';
+import { ARTICLES } from '@/data/articles';
+
+const toolIcons: Record<string, string> = {
+  'weight-calculator': 'fa-solid fa-scale-balanced',
+  'blanketing-guide': 'fa-solid fa-temperature-three-quarters',
+  'foal-color-predictor': 'fa-solid fa-dna',
+  'deworming-schedule': 'fa-solid fa-capsules',
+  'mare-gestation-calculator': 'fa-solid fa-cake-candles',
+  'feed-cost-calculator': 'fa-solid fa-calculator',
+  'riding-log': 'fa-solid fa-book-open',
+  'show-checklist': 'fa-solid fa-list-check',
+  'body-condition-scorer': 'fa-solid fa-weight-scale',
+  'horse-age-converter': 'fa-solid fa-clock-rotate-left',
+  'medication-dosage': 'fa-solid fa-syringe',
+  'saddle-fit-guide': 'fa-solid fa-horse',
+  'height-converter': 'fa-solid fa-ruler-combined',
+  'water-intake-calculator': 'fa-solid fa-droplet',
+  'boarding-cost': 'fa-solid fa-coins',
+  'pasture-size-calculator': 'fa-solid fa-tree',
+};
+
+// Massive FAQ for AI Overviews (15 questions)
+const faqItems = [
+  { q: "What is EquiToolkit?", a: "EquiToolkit is a free online equestrian platform providing horse calculators, stable management tools, horse breed information, health references, feeding resources, printable checklists, and educational guides for horse owners, riders, breeders, trainers, veterinarians, and stable managers. All tools run entirely within the browser without sending personal information to external servers." },
+  { q: "Are the equine calculators accurate?", a: "Yes, our calculations are built upon standard veterinary formulas, such as the Henneke Body Condition Scale, AAEP strategic deworming models, and the NRC Nutrient Requirements of Horses. We reference peer‑reviewed studies and provide transparent documentation." },
+  { q: "Is EquiToolkit really free?", a: "Absolutely. All calculators, guides, checklists, and resources are 100% free. We do not charge subscriptions, lock features, or display noisy advertisements. Our mission is to make essential equine tools universally accessible." },
+  { q: "Can I use the tools offline?", a: "Yes. Once a tool page is loaded, all calculations run inside your browser using client‑side JavaScript. You can continue using them without an internet connection—perfect for barns, arenas, and rural areas with poor reception." },
+  { q: "Do you store my horse's data?", a: "No. EquiToolkit never sends your horse's measurements, feeding logs, or stable records to any server. Interactive tools like the Riding Log and Show Checklist store data only in your browser's localStorage, which you control entirely." },
+  { q: "Are the calculators veterinary approved?", a: "All tools are designed based on accepted veterinary guidelines, but they are educational aids, not replacements for professional veterinary advice. We strongly recommend consulting your veterinarian before making medical decisions." },
+  { q: "Can professionals use EquiToolkit?", a: "Yes. Veterinarians, equine nutritionists, farriers, stable managers, and breeders frequently use our reference tables, dosage calculators, and record‑keeping tools in their daily work." },
+  { q: "Which calculator should I start with?", a: "The Horse Weight Calculator is our most popular tool. It helps you estimate your horse's weight without a scale, which is foundational for accurate feeding, medication, and health monitoring." },
+  { q: "What horse breeds are covered?", a: "We cover over 50 breeds in our Breed Database, including Arabians, Quarter Horses, Thoroughbreds, Friesians, Clydesdales, Shetland Ponies, and many more. Each breed profile includes height, weight, temperament, health risks, and feeding considerations." },
+  { q: "Do you have printable resources?", a: "Yes. We offer over 25 printable templates, including show checklists, farrier ledgers, stall cards, feed charts, and health record sheets. All are formatted for standard printers." },
+  { q: "How do blanketing charts work?", a: "Our interactive blanketing guide asks for ambient temperature, wind, precipitation, and your horse's coat type, then instantly recommends the appropriate blanket weight. It's based on established equine thermoregulation principles." },
+  { q: "Can I compare horse breeds?", a: "Yes. The Breed Comparison Tool lets you select up to three breeds and compare height, weight, temperament, uses, lifespan, climate suitability, grooming needs, and key health concerns side‑by‑side." },
+  { q: "What is the Henneke Body Condition Score?", a: "The Henneke scale is a 1‑to‑9 rating system developed by Dr. Don Henneke in 1983. It's the universal standard for evaluating a horse's fat reserves across six anatomical areas. Our Body Condition Scorer includes visual references to help you assess your horse." },
+  { q: "Do you have feeding calculators?", a: "Yes. We provide a Feed Cost Calculator, Water Intake Estimator, Pasture Size Calculator, and a comprehensive Feed & Forage Database covering hay, grasses, grains, supplements, and minerals." },
+  { q: "Is EquiToolkit mobile‑friendly?", a: "Absolutely. The entire site is responsive and works on smartphones, tablets, and desktops. You can add it to your phone's home screen for instant access." },
+  { q: "How often are tools updated?", a: "Our editorial board reviews all calculators and guides regularly. Last reviewed: July 2026. We update content based on new veterinary research and user feedback." },
+  { q: "Who created EquiToolkit?", a: "EquiToolkit was founded in 2026 by veterinary technicians, professional barn managers, and software engineers who believed essential equine tools should be free, private, and functional even without internet." },
+  { q: "Can I suggest a new tool?", a: "Yes! Visit our Contact page and send us your suggestion. We regularly add new calculators based on community requests." },
+];
+
+// FAQPage schema
+const faqSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'FAQPage',
+  'mainEntity': faqItems.map(item => ({
+    '@type': 'Question',
+    'name': item.q,
+    'acceptedAnswer': {
+      '@type': 'Answer',
+      'text': item.a
+    }
+  }))
+};
+
+// Statistics
+const stats = [
+  { icon: 'fa-solid fa-horse', value: '50+', label: 'Horse Breeds' },
+  { icon: 'fa-solid fa-calculator', value: '20+', label: 'Horse Calculators' },
+  { icon: 'fa-solid fa-book-open', value: '100+', label: 'Educational Guides' },
+  { icon: 'fa-solid fa-palette', value: '12', label: 'Coat Colors' },
+  { icon: 'fa-solid fa-file-pdf', value: '25+', label: 'Printable Resources' },
+  { icon: 'fa-solid fa-users', value: 'Thousands', label: 'Horse Owners Helped' },
+];
+---
+
+<MainLayout title="Free Horse Calculators & Complete Equine Toolkit | EquiToolkit" description="EquiToolkit offers free horse calculators, stable management tools, breed guides, health references, feeding resources, printable checklists, and educational articles. No sign‑up, works offline, 100% private.">
+  <div class="page-wrap">
+    <!-- ═══════ HERO (Conversion + Entity) ═══════ -->
+    <section class="hero">
+      <div class="hero-content">
+        <span class="hero-chip"><i class="fa-solid fa-circle-check"></i> 100% Free & Private</span>
+        <h1 class="hero-title">The Complete Horse Care Toolkit</h1>
+        <p class="hero-desc">Free horse calculators, stable management tools, breed guides, health resources, feeding references, blanketing guides, printable checklists, and equestrian education—all in one place.</p>
+        <div class="hero-btns">
+          <a href="#tools" class="btn btn-primary"><i class="fa-solid fa-compass"></i> Explore All Free Tools</a>
+          <a href="/horse-weight-calculator" class="btn btn-outline"><i class="fa-solid fa-weight-hanging"></i> Weight Calculator</a>
+        </div>
+      </div>
+      <div class="hero-visual">
+        <i class="fa-solid fa-horse hero-horse"></i>
+        <div class="hero-glow"></div>
+      </div>
+    </section>
+
+    <!-- ═══════ WHAT IS EQUITOOLKIT? ═══════ -->
+    <section class="section" id="what-is">
+      <div class="section-head">
+        <h2>What is EquiToolkit?</h2>
+        <p>A complete, free equestrian platform built for horse owners, stable managers, breeders, and veterinarians.</p>
+      </div>
+      <div class="content-box">
+        <p>EquiToolkit is a <strong>free online equestrian platform</strong> providing a comprehensive collection of <strong>horse calculators</strong>, stable management tools, horse breed information, health references, feeding resources, printable checklists, and educational guides. It's designed for everyone who cares for horses—whether you're a backyard owner, a professional barn manager, a breeder, a riding instructor, or a veterinary student.</p>
+        <p>Unlike paid barn management software, all of our tools run entirely within your browser. There are <strong>no accounts, no subscriptions, and no data collection</strong>. Your horse's weight, feeding records, and medical logs stay on your device, protected by your browser's local storage.</p>
+        <p>Our calculators are built using scientifically validated formulas from institutions like the <strong>AAEP</strong>, the <strong>NRC</strong>, and the <strong>Henneke Body Condition Scale</strong>. We continuously update our reference tables and guides to reflect the latest veterinary research.</p>
+        <p>EquiToolkit is also <strong>offline‑capable</strong>. Once a page is loaded, you can continue to use the calculators without an internet connection—ideal for barns, arenas, and rural properties with poor reception.</p>
+        <p>We believe essential equine tools should be universally accessible. That's why every calculator, checklist, and reference guide is <strong>100% free, forever</strong>.</p>
+      </div>
+    </section>
+
+    <!-- ═══════ STATISTICS ═══════ -->
+    <section class="section">
+      <div class="section-head">
+        <h2>By the Numbers</h2>
+        <p>What you'll find inside the EquiToolkit platform.</p>
+      </div>
+      <div class="stats-grid">
+        {stats.map(stat => (
+          <div class="stat-card">
+            <i class={stat.icon}></i>
+            <span class="stat-value">{stat.value}</span>
+            <span class="stat-label">{stat.label}</span>
+          </div>
+        ))}
+      </div>
+    </section>
+
+    <!-- ═══════ COMPLETE TOOL DIRECTORY ═══════ -->
+    <section class="section" id="tools">
+      <div class="section-head">
+        <h2>Free Horse Calculators & Tools Directory</h2>
+        <p>Browse every tool by category—from health and nutrition to stable management and breeding.</p>
+      </div>
+      <div class="tools-grid three-col" id="tools-grid-box">
+        {TOOLS.map(tool => (
+          <div class="tool-card-wrapper" data-tool-category={tool.category} data-tool-title={tool.title.toLowerCase()} data-tool-desc={tool.shortDesc.toLowerCase()}>
+            <a href={tool.path} class="tool-card">
+              <div class="tool-icon"><i class={toolIcons[tool.id] || 'fa-solid fa-horse'}></i></div>
+              <h3>{tool.title}</h3>
+              <p>{tool.shortDesc || 'A free equine calculator.'}</p>
+              <span class="tool-tag">{tool.category || 'Tool'}</span>
+            </a>
+          </div>
+        ))}
+      </div>
+      <div class="text-center" style="margin-top:2rem;">
+        <a href="/all-tools" class="btn btn-outline"><i class="fa-solid fa-list"></i> View All Tools</a>
+      </div>
+    </section>
+
+    <!-- ═══════ POPULAR HORSE CALCULATORS (Huge Internal Link Section) ═══════ -->
+    <section class="section">
+      <div class="section-head">
+        <h2>Popular Horse Calculators</h2>
+        <p>Quick links to our most‑used equine calculators.</p>
+      </div>
+      <div class="link-cloud">
+        <a href="/horse-weight-calculator"><i class="fa-solid fa-scale-balanced"></i> Horse Weight Calculator</a>
+        <a href="/height-converter"><i class="fa-solid fa-ruler-combined"></i> Horse Height Converter</a>
+        <a href="/feed-cost-calculator"><i class="fa-solid fa-calculator"></i> Horse Feed Calculator</a>
+        <a href="/water-intake-calculator"><i class="fa-solid fa-droplet"></i> Horse Water Intake</a>
+        <a href="/boarding-cost-calculator"><i class="fa-solid fa-coins"></i> Horse Boarding Cost</a>
+        <a href="/horse-age-converter"><i class="fa-solid fa-clock-rotate-left"></i> Horse Age Calculator</a>
+        <a href="/medication-dosage"><i class="fa-solid fa-syringe"></i> Medication Calculator</a>
+        <a href="/blanketing-guide"><i class="fa-solid fa-temperature-three-quarters"></i> Blanketing Calculator</a>
+        <a href="/body-condition-scorer"><i class="fa-solid fa-weight-scale"></i> Body Condition Score</a>
+        <a href="/mare-gestation-calculator"><i class="fa-solid fa-cake-candles"></i> Gestation Calculator</a>
+        <a href="/pasture-size-calculator"><i class="fa-solid fa-tree"></i> Pasture Size Calculator</a>
+        <a href="/saddle-fit-guide"><i class="fa-solid fa-horse"></i> Saddle Fit Guide</a>
+        <a href="/deworming-schedule"><i class="fa-solid fa-capsules"></i> Deworming Schedule</a>
+        <a href="/foal-color-predictor"><i class="fa-solid fa-dna"></i> Foal Color Predictor</a>
+        <a href="/riding-log"><i class="fa-solid fa-book-open"></i> Riding Log</a>
+        <a href="/show-checklist"><i class="fa-solid fa-list-check"></i> Show Checklist</a>
+      </div>
+      <div class="text-center" style="margin-top:2rem;">
+        <a href="/all-tools" class="btn btn-outline"><i class="fa-solid fa-arrow-right"></i> All Horse Calculators</a>
+      </div>
+    </section>
+
+    <!-- ═══════ HORSE BREED EXPLORER ═══════ -->
+    <section class="section">
+      <div class="section-head">
+        <h2>Browse Horse Breeds</h2>
+        <p>Explore over 50 breeds with detailed care profiles.</p>
+      </div>
+      <div class="link-cloud">
+        {BREEDS.slice(0, 12).map(breed => (
+          <a href={`/breeds/${breed.id}`}><i class="fa-solid fa-horse"></i> {breed.name}</a>
+        ))}
+      </div>
+      <div class="text-center" style="margin-top:2rem;">
+        <a href="/breeds" class="btn btn-outline"><i class="fa-solid fa-horse-head"></i> View All 50+ Breeds</a>
+      </div>
+    </section>
+
+    <!-- ═══════ COAT COLOR EXPLORER ═══════ -->
+    <section class="section">
+      <div class="section-head">
+        <h2>Horse Coat Colors</h2>
+        <p>Learn about equine color genetics and explore the spectrum of coat colors.</p>
+      </div>
+      <div class="link-cloud">
+        <a href="/colors"><i class="fa-solid fa-palette"></i> Bay</a>
+        <a href="/colors"><i class="fa-solid fa-palette"></i> Black</a>
+        <a href="/colors"><i class="fa-solid fa-palette"></i> Chestnut</a>
+        <a href="/colors"><i class="fa-solid fa-palette"></i> Grey</a>
+        <a href="/colors"><i class="fa-solid fa-palette"></i> Palomino</a>
+        <a href="/colors"><i class="fa-solid fa-palette"></i> Buckskin</a>
+        <a href="/colors"><i class="fa-solid fa-palette"></i> Roan</a>
+        <a href="/colors"><i class="fa-solid fa-palette"></i> Dun</a>
+      </div>
+      <div class="text-center" style="margin-top:2rem;">
+        <a href="/colors" class="btn btn-outline"><i class="fa-solid fa-arrow-right"></i> Explore All Coat Colors</a>
+      </div>
+    </section>
+
+    <!-- ═══════ EDUCATIONAL HUB ═══════ -->
+    <section class="section">
+      <div class="section-head">
+        <h2>Learn About Horses</h2>
+        <p>Our educational guides and reference materials cover every aspect of horse care.</p>
+      </div>
+      <div class="link-cloud">
+        <a href="/health-library"><i class="fa-solid fa-notes-medical"></i> Horse Health</a>
+        <a href="/feed-database"><i class="fa-solid fa-wheat-awn"></i> Horse Nutrition</a>
+        <a href="/articles"><i class="fa-solid fa-book"></i> Horse Breeding</a>
+        <a href="/articles"><i class="fa-solid fa-brain"></i> Horse Behavior</a>
+        <a href="/equipment-guides"><i class="fa-solid fa-toolbox"></i> Horse Grooming</a>
+        <a href="/stable-hub"><i class="fa-solid fa-warehouse"></i> Horse Stable Management</a>
+        <a href="/riding-log"><i class="fa-solid fa-person-running"></i> Horse Riding</a>
+        <a href="/equipment-guides"><i class="fa-solid fa-saddle"></i> Horse Equipment</a>
+        <a href="/health-library"><i class="fa-solid fa-kit-medical"></i> Horse First Aid</a>
+        <a href="/articles"><i class="fa-solid fa-graduation-cap"></i> Horse Training</a>
+      </div>
+      <div class="text-center" style="margin-top:2rem;">
+        <a href="/articles" class="btn btn-outline"><i class="fa-solid fa-book-open"></i> Browse All Guides</a>
+      </div>
+    </section>
+
+    <!-- ═══════ WHY TRUST EQUITOOLKIT? ═══════ -->
+    <section class="section">
+      <div class="section-head">
+        <h2>Why Trust EquiToolkit?</h2>
+        <p>Privacy, accuracy, and transparency are our foundation.</p>
+      </div>
+      <div class="tools-grid three-col">
+        <div class="info-card">
+          <i class="fa-solid fa-laptop-code info-icon"></i>
+          <h3>Browser‑Based Calculations</h3>
+          <p>All tools run directly in your browser. No server processing, no data uploads. Your horse's information remains completely private.</p>
+        </div>
+        <div class="info-card">
+          <i class="fa-solid fa-shield-haltered info-icon"></i>
+          <h3>No Data Collection</h3>
+          <p>We never collect, store, or sell your horse's health records, feeding logs, or stable data. No accounts, no cookies, no tracking.</p>
+        </div>
+        <div class="info-card">
+          <i class="fa-solid fa-flask info-icon"></i>
+          <h3>Veterinary References</h3>
+          <p>Our calculators are based on AAEP guidelines, NRC Nutrient Requirements, and the Henneke Body Condition Scale. All formulas are publicly documented.</p>
+        </div>
+        <div class="info-card">
+          <i class="fa-solid fa-mobile-screen-button info-icon"></i>
+          <h3>Mobile‑Friendly</h3>
+          <p>The entire site works flawlessly on smartphones and tablets. Add it to your home screen for instant, app‑like access.</p>
+        </div>
+        <div class="info-card">
+          <i class="fa-solid fa-wifi-slash info-icon"></i>
+          <h3>Offline‑Ready</h3>
+          <p>Once loaded, tools continue to work without internet. Perfect for barns, arenas, and remote trails.</p>
+        </div>
+        <div class="info-card">
+          <i class="fa-solid fa-heart info-icon"></i>
+          <h3>Free Forever</h3>
+          <p>No subscriptions, no premium tiers, no hidden costs. Our core tools will always be free for the equestrian community.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ═══════ HOW EQUITOOLKIT WORKS ═══════ -->
+    <section class="how-section">
+      <div class="section-head">
+        <h2>How EquiToolkit Works</h2>
+        <p>Three simple steps to accurate equine metrics—no learning curve.</p>
+      </div>
+      <div class="steps-grid">
+        <div class="step">
+          <div class="step-num"><i class="fa-solid fa-1"></i></div>
+          <h3>Choose a Tool</h3>
+          <p>Browse calculators, guides, or reference tables—organised by category for quick access.</p>
+        </div>
+        <div class="step">
+          <div class="step-num"><i class="fa-solid fa-2"></i></div>
+          <h3>Enter Horse Information</h3>
+          <p>Input measurements in metric or imperial units. Clear labels and sliders guide you step‑by‑step.</p>
+        </div>
+        <div class="step">
+          <div class="step-num"><i class="fa-solid fa-3"></i></div>
+          <h3>Get Instant Results</h3>
+          <p>Results appear instantly. You can learn more about the underlying science or print a report.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ═══════ FAQ (15+ questions) ═══════ -->
+    <section class="section">
+      <div class="section-head">
+        <h2>Frequently Asked Questions</h2>
+        <p>Clear answers to the most common questions about EquiToolkit.</p>
+      </div>
+      <div class="faq-list">
+        {faqItems.map(item => (
+          <details class="faq-item">
+            <summary>{item.q}</summary>
+            <p>{item.a}</p>
+          </details>
+        ))}
+      </div>
+      <script type="application/ld+json" set:html={JSON.stringify(faqSchema)}></script>
+    </section>
+
+    <!-- ═══════ RELATED TOPICS (Semantic Hub) ═══════ -->
+    <section class="section">
+      <div class="section-head">
+        <h2>Explore Related Topics</h2>
+        <p>Dive deeper into every aspect of horse care and stable management.</p>
+      </div>
+      <div class="link-cloud">
+        <a href="/horse-weight-calculator">Horse Weight</a>
+        <a href="/feed-database">Horse Nutrition</a>
+        <a href="/feed-cost-calculator">Horse Feeding</a>
+        <a href="/health-library">Horse Health</a>
+        <a href="/health-library">Horse Diseases</a>
+        <a href="/blanketing-guide">Horse Blanketing</a>
+        <a href="/riding-log">Horse Riding</a>
+        <a href="/seasonal-care">Horse Care</a>
+        <a href="/mare-gestation-calculator">Horse Breeding</a>
+        <a href="/stable-hub">Horse Management</a>
+        <a href="/stable-hub">Horse Stable</a>
+        <a href="/equipment-guides">Horse Tack</a>
+        <a href="/health-library">Horse Safety</a>
+        <a href="/boarding-cost-calculator">Horse Costs</a>
+        <a href="/equipment-guides">Horse Equipment</a>
+      </div>
+    </section>
+
+    <!-- ═══════ AI-FRIENDLY SUMMARY ═══════ -->
+    <section class="section">
+      <div class="content-box ai-summary">
+        <h2>About EquiToolkit</h2>
+        <p>EquiToolkit is a free online equestrian platform providing horse calculators, stable management tools, horse breed information, health references, feeding resources, printable checklists, and educational guides for horse owners, riders, breeders, trainers, veterinarians, and stable managers. All tools run entirely within the browser without sending personal information to external servers.</p>
+      </div>
+    </section>
+
+    <!-- ═══════ FINAL CTA ═══════ -->
+    <section class="cta-section">
+      <div class="cta-content">
+        <h2><i class="fa-solid fa-heart"></i> All Tools. Always Free. Forever.</h2>
+        <p>Join thousands of horse owners who trust EquiToolkit for daily barn management.</p>
+        <a href="#tools" class="btn btn-white"><i class="fa-solid fa-rocket"></i> Start Using Free Horse Tools</a>
+      </div>
+    </section>
+  </div>
+</MainLayout>
+
+<style>
+  .page-wrap { display: flex; flex-direction: column; gap: 5rem; padding-bottom: 0; }
+  .hero {
+    background: linear-gradient(135deg, #f9f7f3 0%, #ffffff 100%);
+    border-bottom: 1px solid var(--border);
+    padding: 5rem 2rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 4rem;
+    flex-wrap: wrap;
+    overflow: hidden;
+  }
+  .hero-content { max-width: 650px; text-align: left; }
+  .hero-chip {
+    display: inline-flex; align-items: center; gap: 0.4rem;
+    background: var(--primary-light); color: var(--primary); font-size: 0.8rem; font-weight: 700;
+    padding: 0.3rem 1rem; border-radius: 50px; margin-bottom: 1.2rem; border: 1px solid rgba(46,92,62,0.15);
+  }
+  .hero-title { font-size: clamp(2rem, 5vw, 3.5rem); font-weight: 900; line-height: 1.2; color: var(--text); margin-bottom: 1rem; }
+  .hero-desc { font-size: 1rem; color: var(--text-muted); max-width: 550px; margin-bottom: 2rem; line-height: 1.6; }
+  .hero-btns { display: flex; gap: 1rem; flex-wrap: wrap; }
+  .hero-visual { position: relative; display: flex; align-items: center; justify-content: center; }
+  .hero-horse { font-size: 12rem; color: var(--primary-light); opacity: 0.6; filter: drop-shadow(0 20px 30px rgba(0,0,0,0.05)); animation: float 6s ease-in-out infinite; }
+  @keyframes float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-15px); } }
+  .hero-glow { position: absolute; width: 400px; height: 400px; background: radial-gradient(circle, rgba(196,154,44,0.08) 0%, transparent 70%); border-radius: 50%; pointer-events: none; }
+
+  .btn { display: inline-flex; align-items: center; gap: 0.4rem; padding: 0.7rem 1.6rem; border-radius: 50px; font-weight: 600; font-size: 0.9rem; text-decoration: none; transition: all 0.2s; cursor: pointer; }
+  .btn-primary { background: var(--primary); color: white; box-shadow: 0 6px 20px rgba(46,92,62,0.25); }
+  .btn-primary:hover { background: #1e4532; transform: translateY(-2px); }
+  .btn-outline { background: transparent; color: var(--primary); border: 2px solid var(--primary); }
+  .btn-outline:hover { background: var(--primary-light); }
+  .btn-white { background: white; color: var(--primary); box-shadow: 0 6px 20px rgba(0,0,0,0.08); }
+  .btn-white:hover { background: #f0f0f0; transform: translateY(-2px); }
+
+  .section { max-width: 1280px; margin: 0 auto; padding: 0 2rem; }
+  .section-head { text-align: center; margin-bottom: 3rem; }
+  .section-head h2 { font-size: 2rem; font-weight: 700; color: var(--text); }
+  .section-head p { color: var(--text-muted); margin-top: 0.5rem; font-size: 0.95rem; }
+
+  .content-box { background: white; border: 1px solid var(--border); border-radius: var(--radius); padding: 2rem; max-width: 800px; margin: 0 auto; color: var(--text-muted); font-size: 0.95rem; line-height: 1.7; }
+  .content-box p { margin-bottom: 1rem; }
+
+  .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 1.5rem; max-width: 1000px; margin: 0 auto; }
+  .stat-card { background: white; border: 1px solid var(--border); border-radius: var(--radius); padding: 2rem 1rem; text-align: center; box-shadow: var(--shadow-sm); }
+  .stat-card i { font-size: 2rem; color: var(--primary); margin-bottom: 0.5rem; }
+  .stat-value { display: block; font-size: 2rem; font-weight: 800; color: var(--text); }
+  .stat-label { font-size: 0.85rem; color: var(--text-muted); }
+
+  .tools-grid { display: grid; gap: 1.5rem; }
+  .three-col { grid-template-columns: repeat(3, 1fr); }
+  @media (max-width: 1024px) { .three-col { grid-template-columns: repeat(2, 1fr); } }
+  @media (max-width: 640px) { .three-col { grid-template-columns: 1fr; } }
+  .tool-card {
+    background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius);
+    padding: 1.8rem; box-shadow: var(--shadow-sm); transition: all 0.25s ease;
+    text-decoration: none; color: inherit; display: flex; flex-direction: column; height: 100%;
+  }
+  .tool-card:hover { transform: translateY(-6px); box-shadow: var(--shadow-lg); border-color: var(--accent); }
+  .tool-icon { width: 52px; height: 52px; border-radius: 14px; background: var(--primary-light); display: flex; align-items: center; justify-content: center; font-size: 1.5rem; color: var(--primary); margin-bottom: 1.2rem; }
+  .tool-card h3 { font-size: 1.15rem; font-weight: 700; margin-bottom: 0.4rem; }
+  .tool-card p { font-size: 0.85rem; color: var(--text-muted); flex: 1; margin-bottom: 1.2rem; line-height: 1.5; }
+  .tool-tag { display: inline-block; font-size: 0.7rem; font-weight: 600; color: var(--primary); background: var(--primary-light); padding: 0.2rem 0.8rem; border-radius: 20px; align-self: flex-start; }
+
+  .link-cloud { display: flex; flex-wrap: wrap; gap: 0.8rem; justify-content: center; max-width: 1000px; margin: 0 auto; }
+  .link-cloud a {
+    display: inline-flex; align-items: center; gap: 0.4rem;
+    background: white; border: 1px solid var(--border); color: var(--text);
+    padding: 0.6rem 1.2rem; border-radius: 50px; font-size: 0.85rem; font-weight: 500;
+    text-decoration: none; transition: 0.2s;
+  }
+  .link-cloud a:hover { background: var(--primary-light); color: var(--primary); border-color: var(--primary); }
+
+  .how-section { background: var(--surface); border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); padding: 5rem 2rem; text-align: center; }
+  .steps-grid { max-width: 1000px; margin: 3rem auto 0; display: grid; grid-template-columns: repeat(3, 1fr); gap: 2.5rem; }
+  @media (max-width: 768px) { .steps-grid { grid-template-columns: 1fr; } }
+  .step-num { width: 56px; height: 56px; border-radius: 18px; background: var(--primary); color: white; display: flex; align-items: center; justify-content: center; font-size: 1.4rem; font-weight: 700; margin: 0 auto 1.2rem; }
+  .step h3 { font-size: 1.1rem; margin-bottom: 0.5rem; }
+  .step p { font-size: 0.85rem; color: var(--text-muted); }
+
+  .info-card { background: white; border: 1px solid var(--border); border-radius: var(--radius); padding: 2rem; text-align: center; box-shadow: var(--shadow-sm); transition: transform 0.2s; }
+  .info-card:hover { transform: translateY(-4px); }
+  .info-icon { font-size: 2.2rem; color: var(--primary); margin-bottom: 1rem; }
+  .info-card h3 { font-size: 1.1rem; margin-bottom: 0.5rem; }
+  .info-card p { font-size: 0.85rem; color: var(--text-muted); line-height: 1.5; }
+
+  .faq-list { max-width: 800px; margin: 0 auto; }
+  .faq-item { border: 1px solid var(--border); border-radius: var(--radius-sm); background: white; margin-bottom: 0.8rem; padding: 1rem 1.5rem; }
+  .faq-item summary { font-weight: 600; cursor: pointer; list-style: none; display: flex; align-items: center; }
+  .faq-item summary::before { content: "\f107"; font-family: "Font Awesome 6 Free"; font-weight: 900; margin-right: 0.7rem; transition: transform 0.2s; color: var(--primary); }
+  .faq-item[open] summary::before { transform: rotate(180deg); }
+  .faq-item p { margin-top: 0.8rem; font-size: 0.85rem; color: var(--text-muted); line-height: 1.6; }
+
+  .ai-summary { background: var(--bg); text-align: center; }
+  .ai-summary h2 { font-size: 1.5rem; color: var(--text); margin-bottom: 1rem; }
+
+  .cta-section { background: var(--primary); text-align: center; padding: 5rem 2rem; color: white; }
+  .cta-content h2 { font-size: 2rem; font-weight: 700; margin-bottom: 0.8rem; display: flex; justify-content: center; align-items: center; gap: 0.5rem; }
+  .cta-content p { font-size: 1rem; opacity: 0.85; margin-bottom: 2rem; }
+
+  .text-center { text-align: center; }
+
+  @media (max-width: 1024px) {
+    .hero { flex-direction: column; text-align: center; padding: 4rem 2rem; }
+    .hero-content { text-align: center; }
+    .hero-horse { font-size: 8rem; }
+  }
+</style>

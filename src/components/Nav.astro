@@ -1,0 +1,490 @@
+---
+import { TOOLS } from '../data';
+const currentUrl = Astro.url.pathname;
+
+// Map of tool paths → Font Awesome icons (used only in dropdowns / mobile menus)
+const toolIcons = {
+  '/horse-weight-calculator': 'fa-solid fa-scale-balanced',
+  '/blanketing-guide': 'fa-solid fa-temperature-three-quarters',
+  '/foal-color-predictor': 'fa-solid fa-paintbrush',
+  '/deworming-schedule': 'fa-solid fa-capsules',
+  '/mare-gestation-calculator': 'fa-solid fa-cake-candles',
+  '/feed-cost-calculator': 'fa-solid fa-calculator',
+  '/riding-log': 'fa-solid fa-book-open',
+  '/show-checklist': 'fa-solid fa-list-check',
+  '/body-condition-scorer': 'fa-solid fa-weight-scale',
+  '/horse-age-converter': 'fa-solid fa-clock-rotate-left',
+  '/medication-dosage': 'fa-solid fa-syringe',
+  '/saddle-fit-guide': 'fa-solid fa-horse',
+};
+
+const hubIcons = {
+  '/health-library': 'fa-solid fa-notes-medical',
+  '/stable-hub': 'fa-solid fa-home',
+  '/feed-database': 'fa-solid fa-wheat-awn',
+  '/breed-comparison': 'fa-solid fa-chart-simple',
+  '/growth-charts': 'fa-solid fa-chart-line',
+  '/timelines': 'fa-solid fa-hourglass-half',
+  '/seasonal-care': 'fa-solid fa-calendar-days',
+  '/search': 'fa-solid fa-magnifying-glass',
+};
+---
+
+<header class="nav-header">
+  <div class="nav-container">
+    <!-- Logo -->
+    <a href="/" class="logo">
+      <i class="fa-solid fa-horse"></i>
+      <span class="logo-text">EquiToolkit</span>
+    </a>
+
+    <!-- Desktop Navigation -->
+    <nav class="desktop-nav">
+      <!-- Equestrian Tools Dropdown (no icon) -->
+      <div class="dropdown-wrapper">
+        <button id="nav-tools-btn" class="dropdown-btn">
+          Equestrian Tools
+          <i class="fa-solid fa-chevron-down arrow-icon" id="tools-arrow"></i>
+        </button>
+        <div id="nav-tools-menu" class="dropdown-menu hidden">
+          <div class="dropdown-label">Select a Tool</div>
+          {TOOLS.map(tool => (
+            <a href={tool.path} class={`dropdown-item ${currentUrl === tool.path ? 'active' : ''}`}>
+              <i class={`${toolIcons[tool.path] || 'fa-solid fa-horse'} dropdown-icon`}></i>
+              <span>{tool.title}</span>
+            </a>
+          ))}
+        </div>
+      </div>
+
+      <!-- Libraries & Hubs Dropdown (no icon) -->
+      <div class="dropdown-wrapper">
+        <button id="nav-hubs-btn" class="dropdown-btn">
+          Libraries & Hubs
+          <i class="fa-solid fa-chevron-down arrow-icon" id="hubs-arrow"></i>
+        </button>
+        <div id="nav-hubs-menu" class="dropdown-menu dropdown-menu-wide hidden">
+          <div class="dropdown-label">
+            <span>Equestrian Resources</span>
+            <span class="badge-new">NEW</span>
+          </div>
+          <a href="/health-library" class={`dropdown-item ${currentUrl === '/health-library' ? 'active' : ''}`}>
+            <i class="fa-solid fa-notes-medical dropdown-icon"></i>
+            <div class="dropdown-item-text">
+              <p class="dropdown-item-title">Horse Health Library</p>
+              <p class="dropdown-item-sub">Searchable medical knowledge base</p>
+            </div>
+          </a>
+          <a href="/stable-hub" class={`dropdown-item ${currentUrl === '/stable-hub' ? 'active' : ''}`}>
+            <i class="fa-solid fa-home dropdown-icon"></i>
+            <div class="dropdown-item-text">
+              <p class="dropdown-item-title">Stable Operations Hub</p>
+              <p class="dropdown-item-sub">Trackers, cleaning & task checklists</p>
+            </div>
+          </a>
+          <a href="/feed-database" class={`dropdown-item ${currentUrl === '/feed-database' ? 'active' : ''}`}>
+            <i class="fa-solid fa-wheat-awn dropdown-icon"></i>
+            <div class="dropdown-item-text">
+              <p class="dropdown-item-title">Feed & Forage Database</p>
+              <p class="dropdown-item-sub">Hay & feed nutrient encyclopedia</p>
+            </div>
+          </a>
+          <a href="/breed-comparison" class={`dropdown-item ${currentUrl === '/breed-comparison' ? 'active' : ''}`}>
+            <i class="fa-solid fa-chart-simple dropdown-icon"></i>
+            <div class="dropdown-item-text">
+              <p class="dropdown-item-title">Breed Comparison Tool</p>
+              <p class="dropdown-item-sub">Compare size, temperament & needs</p>
+            </div>
+          </a>
+          <a href="/growth-charts" class={`dropdown-item ${currentUrl === '/growth-charts' ? 'active' : ''}`}>
+            <i class="fa-solid fa-chart-line dropdown-icon"></i>
+            <div class="dropdown-item-text">
+              <p class="dropdown-item-title">Interactive Growth Charts</p>
+              <p class="dropdown-item-sub">Interactive weight & height projections</p>
+            </div>
+          </a>
+          <a href="/timelines" class={`dropdown-item ${currentUrl === '/timelines' ? 'active' : ''}`}>
+            <i class="fa-solid fa-hourglass-half dropdown-icon"></i>
+            <div class="dropdown-item-text">
+              <p class="dropdown-item-title">Husbandry Timelines</p>
+              <p class="dropdown-item-sub">Deworming, vaccine & gestation tracker</p>
+            </div>
+          </a>
+          <a href="/seasonal-care" class={`dropdown-item ${currentUrl === '/seasonal-care' ? 'active' : ''}`}>
+            <i class="fa-solid fa-calendar-days dropdown-icon"></i>
+            <div class="dropdown-item-text">
+              <p class="dropdown-item-title">Seasonal Care Guides</p>
+              <p class="dropdown-item-sub">Spring, summer, autumn, winter regimens</p>
+            </div>
+          </a>
+          <div class="dropdown-separator"></div>
+          <a href="/search" class={`dropdown-item ${currentUrl === '/search' ? 'active' : ''}`}>
+            <i class="fa-solid fa-magnifying-glass dropdown-icon"></i>
+            <div class="dropdown-item-text">
+              <p class="dropdown-item-title">Advanced Search</p>
+              <p class="dropdown-item-sub">Query entire database instantly</p>
+            </div>
+          </a>
+        </div>
+      </div>
+
+      <!-- Plain Links (no icons) -->
+      <a href="/breeds" class={`nav-link ${currentUrl === '/breeds' ? 'active-link' : ''}`}>Breeds</a>
+      <a href="/colors" class={`nav-link ${currentUrl === '/colors' ? 'active-link' : ''}`}>Colors</a>
+      <a href="/reference-tables" class={`nav-link ${currentUrl === '/reference-tables' ? 'active-link' : ''}`}>References</a>
+      <a href="/printable-resources" class={`nav-link ${currentUrl === '/printable-resources' ? 'active-link' : ''}`}>Printables</a>
+      <a href="/articles" class={`nav-link ${currentUrl === '/articles' || currentUrl.startsWith('/article/') ? 'active-link' : ''}`}>Guides</a>
+
+      <!-- CTA -->
+      <a href="/horse-weight-calculator" class="nav-cta">
+        <span>Weight Calculator</span>
+      </a>
+    </nav>
+
+    <!-- Mobile menu button -->
+    <button id="mobile-menu-btn" class="mobile-trigger" aria-label="Toggle menu">
+      <i class="fa-solid fa-bars" id="mobile-menu-icon"></i>
+    </button>
+  </div>
+
+  <!-- Mobile Drawer (icons kept) -->
+  <div id="mobile-menu" class="mobile-drawer hidden">
+    <div class="mobile-section">
+      <p class="mobile-section-title">Knowledge Hub</p>
+      <a href="/breeds" class="mobile-link"><i class="fa-solid fa-horse-head"></i> Breed Care Database</a>
+      <a href="/colors" class="mobile-link"><i class="fa-solid fa-palette"></i> Coat Colors</a>
+      <a href="/reference-tables" class="mobile-link"><i class="fa-solid fa-table"></i> Reference Tables</a>
+      <a href="/printable-resources" class="mobile-link"><i class="fa-solid fa-print"></i> Printable Templates</a>
+      <a href="/articles" class="mobile-link"><i class="fa-solid fa-book"></i> Educational Guides</a>
+    </div>
+
+    <div class="mobile-section">
+      <p class="mobile-section-title">Free Calculators</p>
+      {TOOLS.map(tool => (
+        <a href={tool.path} class="mobile-link">
+          <i class={`${toolIcons[tool.path] || 'fa-solid fa-horse'} mobile-icon`}></i> {tool.title}
+        </a>
+      ))}
+    </div>
+
+    <a href="/horse-weight-calculator" class="mobile-cta">
+      <i class="fa-solid fa-weight-hanging"></i> Start With Weight Calculator
+    </a>
+  </div>
+</header>
+
+<script>
+  // Mobile toggle
+  const mobileBtn = document.getElementById('mobile-menu-btn');
+  const mobileMenu = document.getElementById('mobile-menu');
+  const mobileIcon = document.getElementById('mobile-menu-icon');
+  mobileBtn?.addEventListener('click', () => {
+    const hidden = mobileMenu.classList.toggle('hidden');
+    mobileIcon.className = hidden ? 'fa-solid fa-bars' : 'fa-solid fa-xmark';
+  });
+
+  // Dropdown toggles
+  const toolsBtn = document.getElementById('nav-tools-btn');
+  const toolsMenu = document.getElementById('nav-tools-menu');
+  const hubsBtn = document.getElementById('nav-hubs-btn');
+  const hubsMenu = document.getElementById('nav-hubs-menu');
+  const toolsArrow = document.getElementById('tools-arrow');
+  const hubsArrow = document.getElementById('hubs-arrow');
+
+  function hideAllMenus() {
+    toolsMenu?.classList.add('hidden');
+    hubsMenu?.classList.add('hidden');
+    toolsArrow?.classList.remove('rotate-180');
+    hubsArrow?.classList.remove('rotate-180');
+  }
+
+  toolsBtn?.addEventListener('click', (e) => {
+    e.stopPropagation();
+    const isOpen = !toolsMenu.classList.contains('hidden');
+    hideAllMenus();
+    if (!isOpen) {
+      toolsMenu.classList.remove('hidden');
+      toolsArrow.classList.add('rotate-180');
+    }
+  });
+
+  hubsBtn?.addEventListener('click', (e) => {
+    e.stopPropagation();
+    const isOpen = !hubsMenu.classList.contains('hidden');
+    hideAllMenus();
+    if (!isOpen) {
+      hubsMenu.classList.remove('hidden');
+      hubsArrow.classList.add('rotate-180');
+    }
+  });
+
+  document.addEventListener('click', hideAllMenus);
+</script>
+
+<style>
+  /* ─── HEADER ─── */
+  .nav-header {
+    background: rgba(255, 255, 255, 0.92);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border-bottom: 1px solid var(--border);
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    padding: 0 2rem;
+  }
+  .nav-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: 68px;
+  }
+
+  /* Logo */
+  .logo {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    text-decoration: none;
+    color: var(--primary);
+    font-weight: 800;
+    font-size: 1.5rem;
+    white-space: nowrap;
+  }
+  .logo i {
+    font-size: 1.8rem;
+    color: var(--accent);
+  }
+
+  /* Desktop Nav — ensure single line */
+  .desktop-nav {
+    display: flex;
+    align-items: center;
+    gap: 1.8rem;
+    flex-wrap: nowrap;       /* prevent wrapping */
+    white-space: nowrap;     /* all text inside stays on one line */
+  }
+  @media (max-width: 1024px) {
+    .desktop-nav {
+      display: none;
+    }
+  }
+
+  /* Dropdown */
+  .dropdown-wrapper {
+    position: relative;
+  }
+  .dropdown-btn {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: var(--text-muted);
+    font-weight: 500;
+    font-size: 0.9rem;
+    padding: 0.4rem 0;
+    transition: color 0.2s;
+    white-space: nowrap;      /* “Equestrian Tools” won’t break */
+  }
+  .dropdown-btn:hover,
+  .dropdown-btn:focus {
+    color: var(--primary);
+  }
+  .arrow-icon {
+    font-size: 0.7rem;
+    transition: transform 0.2s;
+  }
+  .rotate-180 {
+    transform: rotate(180deg);
+  }
+
+  .dropdown-menu {
+    position: absolute;
+    top: 110%;
+    right: 0;
+    width: 280px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow-lg);
+    padding: 0.5rem;
+    z-index: 50;
+    max-height: 400px;
+    overflow-y: auto;
+  }
+  .dropdown-menu-wide {
+    width: 320px;
+  }
+  .dropdown-label {
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    color: var(--text-muted);
+    padding: 0.3rem 0.8rem;
+    margin-bottom: 0.3rem;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .badge-new {
+    background: var(--primary-light);
+    color: var(--primary);
+    font-size: 0.65rem;
+    font-weight: 700;
+    padding: 0.1rem 0.5rem;
+    border-radius: 20px;
+  }
+  .dropdown-item {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    padding: 0.6rem 0.8rem;
+    text-decoration: none;
+    color: var(--text);
+    border-radius: var(--radius-sm);
+    transition: background 0.2s;
+    font-size: 0.9rem;
+  }
+  .dropdown-item:hover,
+  .dropdown-item.active {
+    background: var(--primary-light);
+    color: var(--primary);
+    font-weight: 600;
+  }
+  .dropdown-icon {
+    width: 1.4rem;
+    text-align: center;
+    font-size: 1rem;
+    color: var(--primary);
+  }
+  .dropdown-item-text {
+    line-height: 1.3;
+  }
+  .dropdown-item-title {
+    font-weight: 600;
+    font-size: 0.85rem;
+  }
+  .dropdown-item-sub {
+    font-size: 0.7rem;
+    color: var(--text-muted);
+  }
+  .dropdown-separator {
+    border-top: 1px solid var(--border);
+    margin: 0.3rem 0;
+  }
+
+  /* Plain nav links — no icons, nowrap */
+  .nav-link {
+    text-decoration: none;
+    color: var(--text-muted);
+    font-weight: 500;
+    font-size: 0.9rem;
+    transition: color 0.2s;
+    white-space: nowrap;
+  }
+  .nav-link:hover,
+  .active-link {
+    color: var(--primary);
+    font-weight: 600;
+  }
+
+  /* CTA */
+  .nav-cta {
+    display: flex;
+    align-items: center;
+    background: var(--primary);
+    color: white !important;
+    padding: 0.5rem 1.2rem;
+    border-radius: 50px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    text-decoration: none;
+    transition: background 0.2s, transform 0.2s;
+    white-space: nowrap;
+  }
+  .nav-cta:hover {
+    background: #1e4532;
+    transform: translateY(-1px);
+  }
+
+  /* Mobile */
+  .mobile-trigger {
+    display: none;
+    background: none;
+    border: none;
+    font-size: 1.6rem;
+    color: var(--primary);
+    padding: 0.5rem;
+  }
+  @media (max-width: 1024px) {
+    .mobile-trigger {
+      display: block;
+    }
+  }
+  .mobile-drawer {
+    border-top: 1px solid var(--border);
+    background: var(--surface);
+    padding: 1.5rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+  }
+  .hidden {
+    display: none;
+  }
+  .mobile-section {
+    display: flex;
+    flex-direction: column;
+    gap: 0.3rem;
+  }
+  .mobile-section-title {
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    color: var(--text-muted);
+    margin-bottom: 0.3rem;
+    border-bottom: 1px solid var(--border);
+    padding-bottom: 0.3rem;
+  }
+  .mobile-link {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.5rem 0.8rem;
+    text-decoration: none;
+    color: var(--text);
+    font-size: 0.9rem;
+    border-radius: var(--radius-sm);
+    transition: background 0.2s;
+  }
+  .mobile-link i {
+    width: 1.2rem;
+    text-align: center;
+    font-size: 0.95rem;
+    color: var(--primary);
+  }
+  .mobile-link:hover,
+  .mobile-link.active {
+    background: var(--primary-light);
+    color: var(--primary);
+  }
+  .mobile-cta {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.4rem;
+    text-align: center;
+    background: var(--primary);
+    color: white;
+    padding: 0.8rem;
+    border-radius: var(--radius-sm);
+    font-weight: 600;
+    text-decoration: none;
+    margin-top: 0.5rem;
+  }
+</style>

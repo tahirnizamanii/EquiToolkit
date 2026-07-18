@@ -1,0 +1,6 @@
+{
+  "name": "EquiToolkit",
+  "description": "A collection of 100% free, offline-first online horse and equestrian tools, calculations, guides, and trackers.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

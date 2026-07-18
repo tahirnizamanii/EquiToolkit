@@ -1,0 +1,87 @@
+---
+import MainLayout from '@/layouts/MainLayout.astro';
+import { TOOLS } from '@/data';
+
+const toolIcons: Record<string, string> = {
+  'weight-calculator': 'fa-solid fa-scale-balanced',
+  'blanketing-guide': 'fa-solid fa-temperature-three-quarters',
+  'foal-color-predictor': 'fa-solid fa-dna',
+};
+
+const externalResources = [
+  { name: 'American Association of Equine Practitioners (AAEP)', desc: 'Gold standard for horse healthcare, vaccines, deworming guidelines.', url: 'https://aaep.org', category: 'Health & Care', icon: 'fa-solid fa-stethoscope' },
+  { name: 'UC Davis Veterinary Medicine', desc: 'Cutting edge equine genetics, coat color alleles, and hereditary conditions.', url: 'https://vgl.ucdavis.edu', category: 'Genetics', icon: 'fa-solid fa-dna' },
+  { name: 'The Henneke Scoring System', desc: 'Original 1983 clinical study detailing the 9-point body fat classification.', url: 'https://aaep.org/horse-owners/owner-guidelines/body-condition-score-chart', category: 'Nutrition', icon: 'fa-solid fa-weight-scale' },
+  { name: 'Equine Science Society (ESS)', desc: 'Global research and symposia on horse performance, saddle pressures, metabolic disorders.', url: 'https://www.equinescience.org', category: 'Research', icon: 'fa-solid fa-flask' },
+];
+---
+
+<MainLayout title="Educational Resources | EquiToolkit" description="Highly vetted external links and educational hubs to expand your equine knowledge base.">
+  <div class="page-wrap">
+    <nav class="breadcrumbs">
+      <a href="/">Home</a>
+      <i class="fa-solid fa-chevron-right"></i>
+      <span>Resources</span>
+    </nav>
+
+    <header class="page-hero">
+      <div class="hero-icon"><i class="fa-solid fa-graduation-cap"></i></div>
+      <h1>Educational Resources</h1>
+      <p>Highly vetted external links and educational hubs to expand your equine knowledge.</p>
+    </header>
+
+    <div class="resource-grid">
+      {externalResources.map(res => (
+        <a href={res.url} target="_blank" rel="noopener noreferrer" class="resource-card">
+          <div class="res-header">
+            <span class="res-tag">{res.category}</span>
+            <i class="fa-solid fa-arrow-up-right-from-square"></i>
+          </div>
+          <h3><i class={res.icon}></i> {res.name}</h3>
+          <p>{res.desc}</p>
+        </a>
+      ))}
+    </div>
+
+    <div class="tools-section">
+      <h2><i class="fa-solid fa-toolbox"></i> Helpful Tools on Our Site</h2>
+      <div class="tool-chips">
+        {TOOLS.slice(0, 4).map(tool => (
+          <a href={tool.path} class="tool-chip">
+            <i class={toolIcons[tool.id] || 'fa-solid fa-horse'}></i>
+            <span>{tool.title}</span>
+          </a>
+        ))}
+      </div>
+    </div>
+  </div>
+</MainLayout>
+
+<style>
+  .page-wrap { max-width: 1000px; margin: 0 auto; padding: 2rem; }
+  .breadcrumbs { font-size: 0.85rem; color: var(--text-muted); margin-bottom: 2rem; display: flex; align-items: center; gap: 0.5rem; }
+  .breadcrumbs a { color: var(--text-muted); text-decoration: none; }
+  .breadcrumbs a:hover { color: var(--primary); }
+  .breadcrumbs i { font-size: 0.7rem; }
+
+  .page-hero { text-align: center; margin-bottom: 3rem; }
+  .hero-icon { font-size: 3rem; color: var(--primary); margin-bottom: 1rem; }
+  .page-hero h1 { font-size: 2rem; font-weight: 800; color: var(--text); }
+  .page-hero p { color: var(--text-muted); }
+
+  .resource-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1.5rem; margin-bottom: 3rem; }
+  .resource-card { background: white; border: 1px solid var(--border); border-radius: var(--radius); padding: 1.5rem; text-decoration: none; color: inherit; transition: 0.2s; display: flex; flex-direction: column; }
+  .resource-card:hover { box-shadow: var(--shadow-lg); border-color: var(--accent); transform: translateY(-2px); }
+  .res-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.8rem; }
+  .res-tag { font-size: 0.7rem; font-weight: 600; color: var(--primary); background: var(--primary-light); padding: 0.2rem 0.7rem; border-radius: 20px; }
+  .res-header i { color: var(--text-muted); font-size: 0.8rem; }
+  .resource-card h3 { font-size: 1rem; font-weight: 700; color: var(--text); margin-bottom: 0.5rem; display: flex; align-items: center; gap: 0.4rem; }
+  .resource-card h3 i { color: var(--primary); font-size: 1rem; width: 1.2rem; }
+  .resource-card p { font-size: 0.85rem; color: var(--text-muted); }
+
+  .tools-section { text-align: center; }
+  .tools-section h2 { font-size: 1.3rem; margin-bottom: 1rem; display: flex; align-items: center; justify-content: center; gap: 0.5rem; color: var(--text); }
+  .tool-chips { display: flex; flex-wrap: wrap; gap: 0.8rem; justify-content: center; }
+  .tool-chip { display: flex; align-items: center; gap: 0.4rem; padding: 0.5rem 1.2rem; background: var(--primary-light); border: 1px solid rgba(46,92,62,0.15); border-radius: 50px; text-decoration: none; color: var(--primary); font-size: 0.85rem; font-weight: 600; transition: 0.2s; }
+  .tool-chip:hover { background: var(--primary); color: white; }
+</style>

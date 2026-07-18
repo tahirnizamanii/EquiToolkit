@@ -1,0 +1,168 @@
+---
+import MainLayout from '@/layouts/MainLayout.astro';
+
+export interface ToolMeta {
+  title: string;
+  description: string;
+  path: string;
+  category: string;
+  shortDesc?: string;
+  icon?: string;   // Font Awesome class, e.g. 'fa-solid fa-scale-balanced'
+}
+
+const { tool } = Astro.props as { tool: ToolMeta };
+const pageTitle = `${tool.title} | EquiToolkit`;
+const pageDescription = tool.shortDesc || tool.description;
+const iconClass = tool.icon || 'fa-solid fa-horse';
+---
+
+<MainLayout title={pageTitle} description={pageDescription}>
+  <div class="tool-page">
+    <!-- Breadcrumbs -->
+    <nav class="breadcrumbs">
+      <a href="/">Home</a>
+      <i class="fa-solid fa-chevron-right"></i>
+      <a href={`/category/${tool.category.toLowerCase().replace(/ & /g, '-').replace(/\s+/g, '-')}`}>{tool.category}</a>
+      <i class="fa-solid fa-chevron-right"></i>
+      <span>{tool.title}</span>
+    </nav>
+
+    <!-- Hero -->
+    <header class="page-hero">
+      <div class="hero-icon"><i class={iconClass}></i></div>
+      <h1>{tool.title}</h1>
+      <p>{tool.shortDesc || tool.description}</p>
+    </header>
+
+    <!-- The interactive tool (React island) -->
+    <section class="tool-container">
+      <div class="tool-card-wrapper">
+        <slot />
+      </div>
+    </section>
+
+    <!-- Educational content / placeholders for SEO -->
+    <section class="tool-info">
+      <h2><i class="fa-solid fa-circle-info"></i> How to Use This Tool</h2>
+      <p>This interactive calculator runs directly in your browser. Enter your horse's measurements or details to get instant results based on veterinary formulas. No data is ever sent to a server – your privacy is guaranteed.</p>
+      <h3>Tips for Accurate Results</h3>
+      <ul>
+        <li>Use a soft measuring tape for body measurements.</li>
+        <li>Ensure your horse is standing square on level ground.</li>
+        <li>Consult your veterinarian before making medical decisions based on these estimates.</li>
+      </ul>
+      <div class="disclaimer-box">
+        <i class="fa-solid fa-triangle-exclamation"></i>
+        <p><strong>Disclaimer:</strong> This tool provides educational estimates only. Always consult a qualified equine veterinarian for clinical advice.</p>
+      </div>
+    </section>
+  </div>
+</MainLayout>
+
+<style>
+  .tool-page {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 2rem;
+  }
+  .breadcrumbs {
+    font-size: 0.85rem;
+    color: var(--text-muted);
+    margin-bottom: 2rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+  .breadcrumbs a { color: var(--text-muted); text-decoration: none; }
+  .breadcrumbs a:hover { color: var(--primary); }
+  .breadcrumbs i { font-size: 0.7rem; }
+
+  .page-hero {
+    text-align: center;
+    margin-bottom: 2rem;
+  }
+  .hero-icon {
+    font-size: 2.5rem;
+    color: var(--primary);
+    margin-bottom: 0.5rem;
+  }
+  .page-hero h1 {
+    font-size: 2rem;
+    font-weight: 800;
+    color: var(--text);
+    margin-bottom: 0.5rem;
+  }
+  .page-hero p {
+    color: var(--text-muted);
+    font-size: 0.95rem;
+  }
+
+  .tool-container {
+    margin-bottom: 2.5rem;
+  }
+  .tool-card-wrapper {
+    background: white;
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 2rem;
+    box-shadow: var(--shadow);
+  }
+
+  .tool-info {
+    background: white;
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 2rem;
+    color: var(--text-muted);
+    font-size: 0.9rem;
+    line-height: 1.6;
+  }
+  .tool-info h2 {
+    font-size: 1.3rem;
+    color: var(--text);
+    margin-bottom: 0.8rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+  .tool-info h3 {
+    font-size: 1rem;
+    color: var(--text);
+    margin-top: 1.5rem;
+    margin-bottom: 0.5rem;
+  }
+  .tool-info ul {
+    list-style: none;
+    padding-left: 0;
+  }
+  .tool-info li {
+    padding: 0.3rem 0;
+    display: flex;
+    align-items: baseline;
+    gap: 0.5rem;
+  }
+  .tool-info li::before {
+    content: "\f058";
+    font-family: "Font Awesome 6 Free";
+    font-weight: 900;
+    color: var(--primary);
+    font-size: 0.8rem;
+  }
+  .disclaimer-box {
+    background: #fff8e1;
+    border: 1px solid #ffc107;
+    border-radius: var(--radius-sm);
+    padding: 1rem;
+    margin-top: 1.5rem;
+    display: flex;
+    align-items: flex-start;
+    gap: 0.8rem;
+    font-size: 0.85rem;
+    color: #8b6914;
+  }
+  .disclaimer-box i {
+    color: #f39c12;
+    font-size: 1.2rem;
+    margin-top: 0.1rem;
+  }
+</style>

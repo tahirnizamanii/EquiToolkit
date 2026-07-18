@@ -1,0 +1,10 @@
+---
+import ToolWrapper from '../components/ToolWrapper.astro';
+import FeedCostCalculator from '../components/tools/FeedCostCalculator';
+import { TOOLS } from '../data';
+
+const tool = TOOLS.find(t => t.id === 'feed-cost')!;
+---
+<ToolWrapper tool={tool}>
+  <FeedCostCalculator client:load />
+</ToolWrapper>

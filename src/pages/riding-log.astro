@@ -1,0 +1,10 @@
+---
+import ToolWrapper from '../components/ToolWrapper.astro';
+import RidingLog from '../components/tools/RidingLog';
+import { TOOLS } from '../data';
+
+const tool = TOOLS.find(t => t.id === 'riding-log')!;
+---
+<ToolWrapper tool={tool}>
+  <RidingLog client:load />
+</ToolWrapper>

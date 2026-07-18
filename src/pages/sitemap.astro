@@ -1,0 +1,7 @@
+---
+import MainLayout from '../layouts/MainLayout.astro';
+import { SitemapPage } from '../components/pages/AdditionalHubPages';
+---
+<MainLayout title="XML Sitemap Directory & Compiler | EquiToolkit" description="View and export the programmatic XML sitemap maps tracking all active calculators, articles, and databases.">
+  <SitemapPage client:load onNavigate={(path) => { window.location.href = path; }} />
+</MainLayout>

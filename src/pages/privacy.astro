@@ -1,0 +1,49 @@
+---
+import MainLayout from '@/layouts/MainLayout.astro';
+---
+
+<MainLayout title="Privacy Policy | 100% Private Equine Calculations" description="Last Updated: July 2026. Your privacy is not a feature; it's our absolute foundation.">
+  <div class="page-wrap">
+    <nav class="breadcrumbs">
+      <a href="/">Home</a>
+      <i class="fa-solid fa-chevron-right"></i>
+      <span>Privacy Policy</span>
+    </nav>
+
+    <header class="page-hero">
+      <div class="hero-icon"><i class="fa-solid fa-shield-halved"></i></div>
+      <h1>Privacy Policy</h1>
+      <p>Last Updated: July 2026. Your privacy is not a feature; it's our absolute foundation.</p>
+    </header>
+
+    <div class="content-box">
+      <h2>1. Zero Server Logins & Personal Information</h2>
+      <p>EquiToolkit does not run any database accounts. We do not prompt you for your name, email, street address, or phone number. You are 100% anonymous when visiting and using our calculations.</p>
+
+      <h2>2. Local Browser Storage (localStorage)</h2>
+      <p>Features like the <strong>Riding Log Book</strong> and <strong>Horse Show Checklist Generator</strong> store data directly inside your own computer or phone's local storage database (localStorage). No data is transmitted to our servers or stored in any cloud environments. Your records are entirely private to you, and clearing your browser cache is the only way this data is removed.</p>
+
+      <h2>3. No Tracking Cookies or Third-Party Ads</h2>
+      <p>We do not allow programmatic third-party banner advertising, behavior-profiling networks, or cookies. We do not monetize your veterinary search patterns or sell horse weight metrics to food, drug, or insurance corporations.</p>
+
+      <h2>4. SSL / HTTPS Security</h2>
+      <p>All interactions are served over secure, military-grade end-to-end SSL encryption to prevent eavesdropping on public barn Wi-Fi connections.</p>
+    </div>
+  </div>
+</MainLayout>
+
+<style>
+  .page-wrap { max-width: 800px; margin: 0 auto; padding: 2rem; }
+  .breadcrumbs { font-size: 0.85rem; color: var(--text-muted); margin-bottom: 2rem; display: flex; align-items: center; gap: 0.5rem; }
+  .breadcrumbs a { color: var(--text-muted); text-decoration: none; }
+  .breadcrumbs a:hover { color: var(--primary); }
+  .breadcrumbs i { font-size: 0.7rem; }
+
+  .page-hero { text-align: center; margin-bottom: 2rem; }
+  .hero-icon { font-size: 3rem; color: var(--primary); margin-bottom: 1rem; }
+  .page-hero h1 { font-size: 2rem; font-weight: 800; color: var(--text); }
+  .page-hero p { color: var(--text-muted); }
+
+  .content-box { background: white; border: 1px solid var(--border); border-radius: var(--radius); padding: 2rem; color: var(--text-muted); font-size: 0.95rem; line-height: 1.7; }
+  .content-box h2 { font-size: 1.3rem; color: var(--text); margin-top: 2rem; margin-bottom: 0.5rem; }
+</style>

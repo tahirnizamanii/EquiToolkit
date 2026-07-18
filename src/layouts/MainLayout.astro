@@ -1,0 +1,102 @@
+---
+import Nav from '@/components/Nav.astro';
+import Footer from '@/components/Footer.astro';
+import ScrollToTopButton from '@/components/ScrollToTopButton.astro';
+import '@/styles/global.css';
+
+interface Props {
+  title?: string;
+  description?: string;
+  metaTitle?: string;
+}
+
+const { 
+  title = "EquiToolkit | Free Online Horse & Equestrian Calculators", 
+  description = "Access EquiToolkit – a professional collection of free online equine weight calculators, blanketing charts, foal color predictors, dosage calculators, and stable logs.",
+  metaTitle
+} = Astro.props;
+
+const pageTitle = metaTitle || title;
+
+// Global Structured SEO Schemas (unchanged)
+const organizationSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'Organization',
+  'name': 'EquiToolkit',
+  'url': 'https://equitoolkit.com',
+  'logo': 'https://equitoolkit.com/icon.png',
+  'sameAs': [
+    'https://github.com/equitoolkit'
+  ]
+};
+
+const websiteSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'WebSite',
+  'name': 'EquiToolkit',
+  'url': 'https://equitoolkit.com',
+  'potentialAction': {
+    '@type': 'SearchAction',
+    'target': 'https://equitoolkit.com/search?q={search_term_string}',
+    'query-input': 'required name=search_term_string'
+  }
+};
+
+const webApplicationSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'WebApplication',
+  'name': 'EquiToolkit Equine Calculator Suite',
+  'url': 'https://equitoolkit.com',
+  'applicationCategory': 'BusinessApplication, HealthApplication',
+  'operatingSystem': 'All',
+  'browserRequirements': 'Requires HTML5, Javascript, CSS3',
+  'offers': {
+    '@type': 'Offer',
+    'price': '0.00',
+    'priceCurrency': 'USD'
+  }
+};
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>{pageTitle}</title>
+    <meta name="description" content={description} />
+    
+    <!-- Font Awesome CDN -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" integrity="sha512-DTOQO9RWCH3ppGqcWaEA1BIZOC6xxalwEsw9c2QQeAIftl+Vegovlnee1c9QX4TctnWMn13TZye+giMm8e2LwA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    
+    <!-- Global Structured SEO Schemas -->
+    <script type="application/ld+json" set:html={JSON.stringify(organizationSchema)} />
+    <script type="application/ld+json" set:html={JSON.stringify(websiteSchema)} />
+    <script type="application/ld+json" set:html={JSON.stringify(webApplicationSchema)} />
+  </head>
+  <body>
+    <Nav />
+    <main>
+      <slot />
+    </main>
+    <Footer />
+    <ScrollToTopButton />
+  </body>
+</html>
+
+<style>
+  /* Replace Tailwind classes with our design system */
+  body {
+    margin: 0;
+    font-family: 'Inter', 'Segoe UI', system-ui, -apple-system, sans-serif;
+    background-color: var(--bg, #faf8f5);
+    color: var(--text, #1a1815);
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+  }
+  main {
+    flex: 1;
+    width: 100%;
+  }
+</style>
