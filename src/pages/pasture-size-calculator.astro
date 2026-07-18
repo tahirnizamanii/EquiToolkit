@@ -3,7 +3,7 @@ import MainLayout from '@/layouts/MainLayout.astro';
 import PastureSize from '@/components/tools/PastureSize';
 import { TOOLS } from '@/data';
 
-// Try all possible IDs for this tool
+// Try all possible IDs for this tool – if none match, tool stays undefined and the page shows a "not found" message instead of crashing.
 let tool = TOOLS.find(t => t.id === 'pasture-size-calculator')
         || TOOLS.find(t => t.id === 'pasture-size')
         || TOOLS.find(t => t.id === 'pasture');
