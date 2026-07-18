@@ -12,15 +12,10 @@ export function getStaticPaths() {
 const { slug } = Astro.params;
 const article = ARTICLES.find(a => a.slug === slug);
 
-if (!article) {
-  return <MainLayout title="Article Not Found"><p>Sorry, that article doesn't exist.</p></MainLayout>;
-}
+const relatedTool = article ? TOOLS.find(t => t.id === article.relatedToolId) : null;
+const pageTitle = article ? `${article.title} | EquiToolkit` : 'Article Not Found';
+const pageDesc = article ? article.summary : '';
 
-const relatedTool = TOOLS.find(t => t.id === article.relatedToolId);
-const pageTitle = `${article.title} | EquiToolkit`;
-const pageDesc = article.summary;
-
-// Map tool icons for related tool
 const toolIcons: Record<string, string> = {
   'weight-calculator': 'fa-solid fa-scale-balanced',
   'blanketing-guide': 'fa-solid fa-temperature-three-quarters',
@@ -38,169 +33,88 @@ const toolIcons: Record<string, string> = {
 ---
 
 <MainLayout title={pageTitle} description={pageDesc}>
-  <div class="page-wrap">
-    <nav class="breadcrumbs">
-      <a href="/">Home</a>
-      <i class="fa-solid fa-chevron-right"></i>
-      <a href="/articles">Articles</a>
-      <i class="fa-solid fa-chevron-right"></i>
-      <span>{article.title}</span>
-    </nav>
+  {!article ? (
+    <div class="not-found">
+      <h1>Article Not Found</h1>
+      <p>Sorry, that article doesn't exist. <a href="/articles">Browse all articles</a>.</p>
+    </div>
+  ) : (
+    <div class="page-wrap">
+      <nav class="breadcrumbs">
+        <a href="/">Home</a>
+        <i class="fa-solid fa-chevron-right"></i>
+        <a href="/articles">Articles</a>
+        <i class="fa-solid fa-chevron-right"></i>
+        <span>{article.title}</span>
+      </nav>
 
-    <article class="article-detail">
-      <header class="article-header">
-        <span class="article-tag">{article.category}</span>
-        <h1>{article.title}</h1>
-        <div class="meta">
-          <span><i class="fa-solid fa-clock"></i> {article.readTime}</span>
-          <span><i class="fa-solid fa-calendar"></i> Published: July 2026</span>
+      <article class="article-detail">
+        <header class="article-header">
+          <span class="article-tag">{article.category}</span>
+          <h1>{article.title}</h1>
+          <div class="meta">
+            <span><i class="fa-solid fa-clock"></i> {article.readTime}</span>
+            <span><i class="fa-solid fa-calendar"></i> Published: July 2026</span>
+          </div>
+        </header>
+
+        <div class="article-body">
+          {article.content.split('\n\n').map(block => {
+            if (block.startsWith('### ')) {
+              return <h3>{block.replace('### ', '')}</h3>;
+            }
+            if (block.startsWith('#### ')) {
+              return <h4>{block.replace('#### ', '')}</h4>;
+            }
+            if (block.startsWith('* ') || block.startsWith('- ')) {
+              const items = block.split('\n').map(line => line.replace(/^[\*\-]\s+/, ''));
+              return <ul>{items.map(item => <li>{item.replace(/\*\*([^*]+)\*\*/g, '$1')}</li>)}</ul>;
+            }
+            if (block.startsWith('|')) {
+              return <p>{block}</p>;
+            }
+            return <p>{block.replace(/\*\*([^*]+)\*\*/g, '$1')}</p>;
+          })}
         </div>
-      </header>
 
-      <div class="article-body">
-        {article.content.split('\n\n').map(block => {
-          if (block.startsWith('### ')) {
-            return <h3>{block.replace('### ', '')}</h3>;
-          }
-          if (block.startsWith('#### ')) {
-            return <h4>{block.replace('#### ', '')}</h4>;
-          }
-          if (block.startsWith('* ') || block.startsWith('- ')) {
-            const items = block.split('\n').map(line => line.replace(/^[\*\-]\s+/, ''));
-            return <ul>{items.map(item => <li>{item.replace(/\*\*([^*]+)\*\*/g, '$1')}</li>)}</ul>;
-          }
-          if (block.startsWith('|')) {
-            // Simple table rendering – can skip or implement later
-            return <p>{block}</p>;
-          }
-          // Normal paragraph
-          return <p>{block.replace(/\*\*([^*]+)\*\*/g, '$1')}</p>;
-        })}
-      </div>
-
-      {relatedTool && (
-        <div class="related-tool">
-          <h3><i class="fa-solid fa-toolbox"></i> Try Our Interactive Calculator</h3>
-          <p>Use the free {relatedTool.title} to put this guide into practice.</p>
-          <a href={relatedTool.path} class="btn btn-primary">
-            <i class={toolIcons[relatedTool.id] || 'fa-solid fa-horse'}></i>
-            Launch {relatedTool.title}
-          </a>
-        </div>
-      )}
-    </article>
-  </div>
+        {relatedTool && (
+          <div class="related-tool">
+            <h3><i class="fa-solid fa-toolbox"></i> Try Our Interactive Calculator</h3>
+            <p>Use the free {relatedTool.title} to put this guide into practice.</p>
+            <a href={relatedTool.path} class="btn btn-primary">
+              <i class={toolIcons[relatedTool.id] || 'fa-solid fa-horse'}></i>
+              Launch {relatedTool.title}
+            </a>
+          </div>
+        )}
+      </article>
+    </div>
+  )}
 </MainLayout>
 
 <style>
-  .page-wrap {
-    max-width: 850px;
-    margin: 0 auto;
-    padding: 2rem;
-  }
-  .breadcrumbs {
-    font-size: 0.85rem;
-    color: var(--text-muted);
-    margin-bottom: 2rem;
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-  }
+  .not-found { text-align: center; padding: 5rem 2rem; }
+  .not-found h1 { font-size: 2rem; margin-bottom: 1rem; }
+  .page-wrap { max-width: 850px; margin: 0 auto; padding: 2rem; }
+  .breadcrumbs { font-size: 0.85rem; color: var(--text-muted); margin-bottom: 2rem; display: flex; align-items: center; gap: 0.5rem; }
   .breadcrumbs a { color: var(--text-muted); text-decoration: none; }
   .breadcrumbs a:hover { color: var(--primary); }
   .breadcrumbs i { font-size: 0.7rem; }
-  .article-detail {
-    background: white;
-    border: 1px solid var(--border);
-    border-radius: var(--radius);
-    padding: 2.5rem;
-  }
-  .article-header {
-    border-bottom: 1px solid var(--border);
-    padding-bottom: 1.5rem;
-    margin-bottom: 2rem;
-  }
-  .article-tag {
-    display: inline-block;
-    background: var(--primary-light);
-    color: var(--primary);
-    font-size: 0.75rem;
-    font-weight: 600;
-    padding: 0.2rem 0.8rem;
-    border-radius: 20px;
-    margin-bottom: 0.8rem;
-  }
-  .article-header h1 {
-    font-size: 2rem;
-    font-weight: 800;
-    color: var(--text);
-    margin-bottom: 0.5rem;
-  }
-  .meta {
-    display: flex;
-    gap: 1.5rem;
-    color: var(--text-muted);
-    font-size: 0.85rem;
-  }
-  .article-body {
-    font-size: 0.95rem;
-    line-height: 1.7;
-    color: var(--text-muted);
-  }
-  .article-body h3 {
-    font-size: 1.3rem;
-    color: var(--text);
-    margin-top: 2rem;
-    margin-bottom: 0.5rem;
-  }
-  .article-body h4 {
-    font-size: 1.1rem;
-    color: var(--text);
-    margin-top: 1.5rem;
-    margin-bottom: 0.5rem;
-  }
-  .article-body ul {
-    padding-left: 1.5rem;
-    list-style: disc;
-  }
-  .article-body li {
-    margin-bottom: 0.4rem;
-  }
-  .article-body p {
-    margin-bottom: 1.2rem;
-  }
-  .related-tool {
-    background: var(--primary-light);
-    border: 1px solid rgba(46,92,62,0.2);
-    border-radius: var(--radius);
-    padding: 2rem;
-    margin-top: 2.5rem;
-    text-align: center;
-  }
-  .related-tool h3 {
-    font-size: 1.2rem;
-    margin-bottom: 0.5rem;
-    color: var(--primary);
-  }
-  .related-tool p {
-    color: var(--text-muted);
-    margin-bottom: 1.2rem;
-  }
-  .btn {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.4rem;
-    padding: 0.7rem 1.6rem;
-    border-radius: 50px;
-    font-weight: 600;
-    font-size: 0.9rem;
-    text-decoration: none;
-    transition: 0.2s;
-  }
-  .btn-primary {
-    background: var(--primary);
-    color: white;
-    box-shadow: 0 4px 14px rgba(46,92,62,0.25);
-  }
+  .article-detail { background: white; border: 1px solid var(--border); border-radius: var(--radius); padding: 2.5rem; }
+  .article-header { border-bottom: 1px solid var(--border); padding-bottom: 1.5rem; margin-bottom: 2rem; }
+  .article-tag { display: inline-block; background: var(--primary-light); color: var(--primary); font-size: 0.75rem; font-weight: 600; padding: 0.2rem 0.8rem; border-radius: 20px; margin-bottom: 0.8rem; }
+  .article-header h1 { font-size: 2rem; font-weight: 800; color: var(--text); margin-bottom: 0.5rem; }
+  .meta { display: flex; gap: 1.5rem; color: var(--text-muted); font-size: 0.85rem; }
+  .article-body { font-size: 0.95rem; line-height: 1.7; color: var(--text-muted); }
+  .article-body h3 { font-size: 1.3rem; color: var(--text); margin-top: 2rem; margin-bottom: 0.5rem; }
+  .article-body h4 { font-size: 1.1rem; color: var(--text); margin-top: 1.5rem; margin-bottom: 0.5rem; }
+  .article-body ul { padding-left: 1.5rem; list-style: disc; }
+  .article-body li { margin-bottom: 0.4rem; }
+  .article-body p { margin-bottom: 1.2rem; }
+  .related-tool { background: var(--primary-light); border: 1px solid rgba(46,92,62,0.2); border-radius: var(--radius); padding: 2rem; margin-top: 2.5rem; text-align: center; }
+  .related-tool h3 { font-size: 1.2rem; margin-bottom: 0.5rem; color: var(--primary); }
+  .related-tool p { color: var(--text-muted); margin-bottom: 1.2rem; }
+  .btn { display: inline-flex; align-items: center; gap: 0.4rem; padding: 0.7rem 1.6rem; border-radius: 50px; font-weight: 600; font-size: 0.9rem; text-decoration: none; transition: 0.2s; }
+  .btn-primary { background: var(--primary); color: white; box-shadow: 0 4px 14px rgba(46,92,62,0.25); }
   .btn-primary:hover { background: #1e4532; transform: translateY(-1px); }
 </style>
