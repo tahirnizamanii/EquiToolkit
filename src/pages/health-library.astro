@@ -116,17 +116,8 @@ const categories = ['All', 'Gastrointestinal', 'Hoof & Skeletal', 'Dermatologica
   });
 
   // ---- Detail View Logic ----
-  const conditionsMap = {};
-  // Build a map for quick access
-  const conditionsData = [
-    {import.meta.env.DEV}
-  ];
-  // Since Astro data isn't directly available in client-side script unless passed,
-  // we'll embed the full array as JSON.
+  // Parse the embedded JSON data (injected by Astro)
   const HEALTH_CONDITIONS = JSON.parse(document.getElementById('health-data')?.textContent || '[]');
-
-  // We'll inject the data as JSON in a script tag (see template below)
-  // Actually, I'll include it directly in the page.
 
   window.showConditionDetail = function(id: string) {
     const condition = HEALTH_CONDITIONS.find(c => c.id === id);
