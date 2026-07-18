@@ -1,6 +1,5 @@
 ---
 import MainLayout from '@/layouts/MainLayout.astro';
-import GrowthCharts from '@/components/tools/GrowthCharts'; // adjust the import to your actual component
 ---
 
 <MainLayout title="Interactive Horse Growth Charts | EquiToolkit" description="Estimate adult horse weights, project foaling/yearling growth rates, and plot developmental growth curves.">
@@ -17,19 +16,11 @@ import GrowthCharts from '@/components/tools/GrowthCharts'; // adjust the import
       <p>Estimate adult horse weights, project foaling/yearling growth rates, and plot developmental curves.</p>
     </header>
 
-    <section class="tool-container">
-      <div class="tool-card-wrapper">
-        <GrowthCharts client:load />
-      </div>
-    </section>
-
-    <section class="tool-info">
-      <h2><i class="fa-solid fa-circle-info"></i> Understanding Growth Curves</h2>
-      <p>These charts use standard developmental percentages to project your horse's mature weight. Enter the current age and measured weight to see where your horse falls on the growth curve.</p>
-      <div class="disclaimer-box">
-        <i class="fa-solid fa-triangle-exclamation"></i>
-        <p><strong>Disclaimer:</strong> Growth projections are estimates. Always consult your veterinarian for nutritional and developmental advice.</p>
-      </div>
+    <section class="placeholder-box">
+      <i class="fa-solid fa-person-digging"></i>
+      <h2>Coming Soon</h2>
+      <p>We're building an interactive growth chart with real‑time SVG curves. Check back soon!</p>
+      <a href="/" class="btn btn-outline"><i class="fa-solid fa-home"></i> Back to Home</a>
     </section>
   </div>
 </MainLayout>
@@ -40,42 +31,13 @@ import GrowthCharts from '@/components/tools/GrowthCharts'; // adjust the import
   .breadcrumbs a { color: var(--text-muted); text-decoration: none; }
   .breadcrumbs a:hover { color: var(--primary); }
   .breadcrumbs i { font-size: 0.7rem; }
-
   .page-hero { text-align: center; margin-bottom: 2rem; }
   .hero-icon { font-size: 2.5rem; color: var(--primary); margin-bottom: 0.5rem; }
-  .page-hero h1 { font-size: 2rem; font-weight: 800; color: var(--text); margin-bottom: 0.5rem; }
+  .page-hero h1 { font-size: 2rem; font-weight: 800; color: var(--text); }
   .page-hero p { color: var(--text-muted); font-size: 0.95rem; }
-
-  .tool-container { margin-bottom: 2.5rem; }
-  .tool-card-wrapper {
-    background: white;
-    border: 1px solid var(--border);
-    border-radius: var(--radius);
-    padding: 2rem;
-    box-shadow: var(--shadow);
-  }
-
-  .tool-info {
-    background: white;
-    border: 1px solid var(--border);
-    border-radius: var(--radius);
-    padding: 2rem;
-    color: var(--text-muted);
-    font-size: 0.9rem;
-    line-height: 1.6;
-  }
-  .tool-info h2 { font-size: 1.3rem; color: var(--text); margin-bottom: 0.8rem; display: flex; align-items: center; gap: 0.5rem; }
-  .disclaimer-box {
-    background: #fff8e1;
-    border: 1px solid #ffc107;
-    border-radius: var(--radius-sm);
-    padding: 1rem;
-    margin-top: 1.5rem;
-    display: flex;
-    align-items: flex-start;
-    gap: 0.8rem;
-    font-size: 0.85rem;
-    color: #8b6914;
-  }
-  .disclaimer-box i { color: #f39c12; font-size: 1.2rem; margin-top: 0.1rem; }
+  .placeholder-box { text-align: center; padding: 4rem 2rem; background: white; border: 1px solid var(--border); border-radius: var(--radius); }
+  .placeholder-box i { font-size: 4rem; color: var(--accent); margin-bottom: 1rem; }
+  .placeholder-box h2 { font-size: 1.5rem; margin-bottom: 0.5rem; }
+  .btn { display: inline-flex; align-items: center; gap: 0.4rem; padding: 0.7rem 1.8rem; border-radius: 50px; font-weight: 600; font-size: 0.9rem; text-decoration: none; transition: 0.2s; margin-top: 1.5rem; }
+  .btn-outline { background: white; color: var(--primary); border: 2px solid var(--primary); }
 </style>
